@@ -1,0 +1,46 @@
+@model List<CustomerOrder>
+@{ ViewData["Title"] = "Order Queue"; var pos = 0; }
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-list-ol"></i> Order Queue</h1>
+        <p class="page-sub">Open orders in the order they were placed.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-primary"><i class="bi bi-grid-3x3-gap"></i> Tables</a>
+</div>
+<div class="card data-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>#</th><th>Order</th><th>Table / Type</th><th>Customer</th><th>Items</th><th>Kitchen status</th><th>Total</th><th>Placed</th><th class="text-end">Actions</th></tr></thead>
+            <tbody>
+            @foreach (var o in Model)
+            {
+                pos++;
+                var live = o.Items.Where(i => i.Status != "Cancelled").ToList();
+                <tr>
+                    <td><span class="queue-no">@pos</span></td>
+                    <td class="fw-semibold">@o.OrderNo</td>
+                    <td>@(o.OrderType == "Parcel" ? "Parcel" : "Table " + o.DiningTable?.TableNumber)</td>
+                    <td>@o.CustomerName <small class="text-muted">@o.CustomerMobile</small></td>
+                    <td>@live.Sum(i => i.Quantity) <small class="text-muted">(@live.Count lines)</small></td>
+                    <td>
+                        <span class="badge b-new">New @live.Count(i => i.Status == "New")</span>
+                        <span class="badge b-preparing">Cooking @live.Count(i => i.Status == "Preparing")</span>
+                        <span class="badge b-ready">Ready @live.Count(i => i.Status == "Ready")</span>
+                        <span class="badge b-served">Served @live.Count(i => i.Status == "Served")</span>
+                    </td>
+                    <td>&#8377;@o.GrandTotal.ToString("N2")</td>
+                    <td>@RestaurantManagement.Services.OrderLogic.ToIst(o.CreatedOn).ToString("hh:mm tt")</td>
+                    <td class="text-end text-nowrap">
+                        <a asp-action="Order" asp-route-orderId="@o.OrderId" class="btn btn-sm btn-outline-primary">Add items</a>
+                        <a asp-controller="Billing" asp-action="Bill" asp-route-id="@o.OrderId" class="btn btn-sm btn-primary">Bill</a>
+                        <form asp-action="CancelOrder" asp-route-id="@o.OrderId" method="post" class="d-inline" data-confirm="Cancel this whole order?">
+                            <button class="btn btn-sm btn-outline-danger" title="Cancel order"><i class="bi bi-x-lg"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any()) { <tr><td colspan="9" class="empty-state"><i class="bi bi-inbox"></i><br />No open orders.</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>

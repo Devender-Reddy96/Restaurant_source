@@ -1,0 +1,57 @@
+@model RestaurantExpense
+@{
+    ViewData["Title"] = Model.DocNo;
+    var s = (RestaurantSetting)ViewBag.Setting;
+    var title = Model.ExpenseType switch { "Ingredient" => "Ingredients Purchase Bill", "Tip" => "Tip Payment", _ => "Expense Voucher" };
+}
+<div class="page-head no-print">
+    <div><h1 class="page-title"><i class="bi bi-journal-minus"></i> @Model.DocNo</h1><p class="page-sub">@title</p></div>
+    <div class="d-flex gap-2 flex-wrap">
+        <button onclick="window.print()" class="btn btn-outline-secondary"><i class="bi bi-printer"></i> Print</button>
+        @if (Model.OrderId == null) { <a asp-action="Edit" asp-route-id="@Model.RestaurantExpenseId" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a> }
+        <a asp-action="Create" asp-route-type="@Model.ExpenseType" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New</a>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
+
+<div class="card" style="max-width:820px"><div class="card-body p-4">
+    <div class="d-flex justify-content-between flex-wrap gap-2 border-bottom pb-3 mb-3">
+        <div><h4 class="mb-0">@s.RestaurantName</h4><div class="text-muted">@title</div></div>
+        <div class="text-md-end">
+            <div><b>@Model.DocNo</b></div>
+            <div>Date: @Model.ExpenseDate.ToString("dd MMM yyyy")</div>
+            @if (!string.IsNullOrEmpty(Model.BillNo)) { <div>Bill no: @Model.BillNo</div> }
+        </div>
+    </div>
+    <p class="mb-3">
+        <b>@(Model.ExpenseType == "Ingredient" ? "Supplier" : Model.ExpenseType == "Tip" ? "Waiter" : "Category"):</b> @Model.PartyName
+        @if (Model.ExpenseType == "Ingredient" && Model.Supplier != null) { <br /><small class="text-muted">@Model.Supplier.Phone @Model.Supplier.GstNumber</small> }
+        @if (!string.IsNullOrEmpty(Model.Description)) { <br /><span class="text-muted">@Model.Description</span> }
+    </p>
+    @if (Model.Items.Any())
+    {
+        <div class="table-responsive"><table class="table table-sm">
+            <thead><tr><th>#</th><th>Ingredient</th><th class="text-end">Qty</th><th class="text-end">Cost / unit</th><th class="text-end">Reorder level</th><th class="text-end">Amount</th></tr></thead>
+            <tbody>
+            @{ var n = 0; }
+            @foreach (var i in Model.Items)
+            {
+                <tr><td>@(++n)</td><td>@i.IngredientName</td><td class="text-end">@i.Quantity.ToString("0.###") @i.UnitName</td><td class="text-end">@i.CostPerUnit.ToString("N2")</td>
+                    <td class="text-end">@i.ReorderLevel.ToString("0.##")</td><td class="text-end">@i.Amount.ToString("N2")</td></tr>
+            }
+            </tbody>
+        </table></div>
+    }
+    <div class="bill-sum ms-auto" style="max-width:340px">
+        <div><span>Sub-total</span><b>&#8377;@Model.SubTotal.ToString("N2")</b></div>
+        @if (Model.ExpenseType != "Tip")
+        {
+            <div><span>Tax (@Model.TaxPercent.ToString("0.##")%)</span><b>&#8377;@Model.TaxAmount.ToString("N2")</b></div>
+            <div><span>Discount (@Model.DiscountPercent.ToString("0.##")%)</span><b>- &#8377;@Model.DiscountAmount.ToString("N2")</b></div>
+        }
+        <div class="fs-5 border-top pt-2"><span>Bill total</span><b>&#8377;@Model.GrandTotal.ToString("N2")</b></div>
+        <div class="text-success"><span>Paid @(string.IsNullOrEmpty(Model.PaymentMode) ? "" : "(" + Model.PaymentMode + ")")</span><b>&#8377;@Model.PaidAmount.ToString("N2")</b></div>
+        <div class="text-danger"><span>Balance</span><b>&#8377;@Model.Balance.ToString("N2")</b></div>
+    </div>
+    <p class="text-muted small mt-4 mb-0">Restaurant expense &ndash; entered by @Model.CreatedBy on @RestaurantManagement.Services.OrderLogic.ToIst(Model.CreatedOn).ToString("dd MMM yyyy, hh:mm tt")@(string.IsNullOrEmpty(Model.ReferenceNo) ? "" : " · Ref " + Model.ReferenceNo)</p>
+</div></div>

@@ -1,0 +1,32 @@
+@model List<AppUser>
+@{
+    ViewData["Title"] = "User Permissions";
+    var counts = (Dictionary<int, int>)ViewBag.Counts;
+}
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-shield-lock"></i> User Permissions</h1>
+        <p class="page-sub">Only the Administrator can give permissions. Pick a user to choose which screens they can view, add, edit and delete.</p>
+    </div>
+    <a asp-controller="Users" asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-person-badge"></i> Users &amp; Login</a>
+</div>
+<div class="card data-card">
+    <div class="card-toolbar"><div class="search-wrap"><i class="bi bi-search"></i><input class="form-control search-box" data-table="#dataTable" placeholder="Search user..." /></div></div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="dataTable">
+            <thead><tr><th>User</th><th>Full name</th><th>Role</th><th>Screens allowed</th><th>Status</th><th class="text-end"></th></tr></thead>
+            <tbody>
+            @foreach (var u in Model)
+            {
+                var admin = u.Role?.RoleName == "Admin";
+                <tr>
+                    <td class="fw-semibold">@u.UserName</td><td>@u.FullName</td><td>@u.Role?.RoleName</td>
+                    <td>@if (admin) { <span class="badge b-yes">Full access (Administrator)</span> } else { <span>@(counts.TryGetValue(u.UserId, out var c) ? c : 0) of @RestaurantManagement.Services.ModuleCatalog.All.Count</span> }</td>
+                    <td><span class="badge @(u.IsActive ? "b-yes" : "b-no")">@(u.IsActive ? "Active" : "Inactive")</span></td>
+                    <td class="text-end">@if (!admin) { <a asp-action="Edit" asp-route-id="@u.UserId" class="btn btn-sm btn-primary"><i class="bi bi-shield-lock"></i> Permissions</a> }</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

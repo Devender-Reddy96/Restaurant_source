@@ -1,0 +1,27 @@
+@model RestaurantSetting
+@{ ViewData["Title"] = "Restaurant & UPI Settings"; }
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-gear"></i> Restaurant &amp; UPI Settings</h1>
+        <p class="page-sub">Owner UPI ID and mobile number used for QR codes, pay links and receipts.</p>
+    </div>
+</div>
+<div class="card form-card"><div class="card-body">
+<form asp-action="Index" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row g-3">
+        <div class="col-md-6"><label asp-for="RestaurantName" class="form-label req"></label><input asp-for="RestaurantName" class="form-control" /><span asp-validation-for="RestaurantName" class="text-danger small"></span></div>
+        <div class="col-md-6"><label asp-for="OwnerName" class="form-label"></label><input asp-for="OwnerName" class="form-control" /></div>
+        <div class="col-md-6"><label asp-for="UpiId" class="form-label"></label><input asp-for="UpiId" class="form-control" placeholder="yourname@okhdfcbank" /><span asp-validation-for="UpiId" class="text-danger small"></span></div>
+        <div class="col-md-6"><label asp-for="UpiPayeeName" class="form-label"></label><input asp-for="UpiPayeeName" class="form-control" placeholder="Name shown in the customer's UPI app" /></div>
+        <div class="col-md-6"><label asp-for="OwnerMobile" class="form-label"></label><input asp-for="OwnerMobile" class="form-control" inputmode="numeric" maxlength="10" /><span asp-validation-for="OwnerMobile" class="text-danger small"></span></div>
+        <div class="col-md-6"><label asp-for="PublicBaseUrl" class="form-label"></label><input asp-for="PublicBaseUrl" class="form-control" placeholder="https://yourrestaurant.com (leave blank to use this site's address)" />
+            <div class="form-text">Customers' phones must be able to open this address. localhost links will not work on their phones.</div></div>
+        <div class="col-12"><label asp-for="BillFooter" class="form-label"></label><input asp-for="BillFooter" class="form-control" /></div>
+    </div>
+    <div class="form-actions"><button class="btn btn-primary"><i class="bi bi-check-lg"></i> Save</button></div>
+</form>
+</div></div>
+@section Scripts {
+    <script>/* jquery-validate is already loaded by the layout */</script>
+}

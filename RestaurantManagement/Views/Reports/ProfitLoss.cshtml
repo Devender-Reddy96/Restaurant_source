@@ -1,0 +1,318 @@
+@{
+    ViewData["Title"] = "Profit & Loss";
+}
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-graph-up-arrow"></i> Profit &amp; Loss Dashboard</h1>
+        <p class="page-sub">Income = sales without GST + tips received. Expenses = ingredient bills + other expenses + tips paid to waiters.</p>
+    </div>
+    <button type="button" class="btn btn-outline-secondary" id="csvDays"><i class="bi bi-download"></i> Day-wise CSV</button>
+</div>
+
+<div class="card mb-3"><div class="card-body py-2">
+    <div class="d-flex flex-wrap gap-2 align-items-end">
+        <div class="btn-group flex-wrap" id="presets">
+            <button class="btn btn-sm btn-outline-primary" data-p="today">Today</button>
+            <button class="btn btn-sm btn-outline-primary" data-p="yesterday">Yesterday</button>
+            <button class="btn btn-sm btn-outline-primary" data-p="7">Last 7 days</button>
+            <button class="btn btn-sm btn-outline-primary" data-p="30">Last 30 days</button>
+            <button class="btn btn-sm btn-outline-primary" data-p="month">This month</button>
+            <button class="btn btn-sm btn-outline-primary" data-p="lastmonth">Last month</button>
+        </div>
+        <div><label class="form-label mb-0 small">From</label><input type="date" id="from" class="form-control form-control-sm" /></div>
+        <div><label class="form-label mb-0 small">To</label><input type="date" id="to" class="form-control form-control-sm" /></div>
+        <button class="btn btn-sm btn-primary" id="go"><i class="bi bi-funnel"></i> Show</button>
+        <span class="text-muted small ms-auto" id="rangeText"></span>
+    </div>
+</div></div>
+
+<div class="row g-3 mb-3" id="quick"></div>
+<div class="row g-3 mb-3" id="kpis"></div>
+
+<div class="row g-3 mb-3">
+    <div class="col-xl-8">
+        <div class="card h-100"><div class="panel-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span>Day-wise income, expenses &amp; profit</span>
+            <div class="d-flex gap-2">
+                <select class="form-select form-select-sm" id="trendMetric" style="width:auto">
+                    <option value="all">Income vs Expenses vs Profit</option><option value="profit">Profit only</option>
+                    <option value="exp">Expense split (Ingredients / Other / Tips)</option>
+                </select>
+                <select class="form-select form-select-sm chart-type" data-chart="trend" style="width:auto">
+                    <option value="bar">Bars</option><option value="line">Lines</option>
+                </select>
+            </div>
+        </div><div class="card-body"><div class="chart-box"><canvas id="cTrend"></canvas></div></div></div>
+    </div>
+    <div class="col-xl-4">
+        <div class="card h-100"><div class="panel-title d-flex justify-content-between align-items-center">
+            <span>Where the money went</span>
+            <select class="form-select form-select-sm chart-type" data-chart="exp" style="width:auto">
+                <option value="bar">Bars</option><option value="doughnut">Doughnut</option><option value="pie">Pie</option>
+            </select>
+        </div><div class="card-body"><div class="chart-box"><canvas id="cExp"></canvas></div></div></div>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-4">
+        <div class="card h-100"><div class="panel-title d-flex justify-content-between align-items-center">
+            <span>Tips by waiter</span>
+            <select class="form-select form-select-sm chart-type" data-chart="tips" style="width:auto"><option value="bar">Bars</option><option value="doughnut">Doughnut</option></select>
+        </div><div class="card-body"><div class="chart-box sm"><canvas id="cTips"></canvas></div></div></div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100"><div class="panel-title d-flex justify-content-between align-items-center">
+            <span>Collections by payment mode</span>
+            <select class="form-select form-select-sm chart-type" data-chart="modes" style="width:auto"><option value="doughnut">Doughnut</option><option value="bar">Bars</option><option value="pie">Pie</option></select>
+        </div><div class="card-body"><div class="chart-box sm"><canvas id="cModes"></canvas></div></div></div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100"><div class="panel-title d-flex justify-content-between align-items-center">
+            <span>Top 10 dishes</span>
+            <select class="form-select form-select-sm chart-type" data-chart="items" style="width:auto"><option value="bar">Bars</option><option value="doughnut">Doughnut</option></select>
+        </div><div class="card-body"><div class="chart-box sm"><canvas id="cItems"></canvas></div></div></div>
+    </div>
+</div>
+
+<div class="card data-card mb-3">
+    <div class="panel-title">Day-wise profit &amp; loss</div>
+    <div class="filter-bar">
+        <div><label class="form-label">Show days</label>
+            <select id="dFilter" class="form-select form-select-sm"><option value="">All days</option><option value="p">Profit days</option><option value="l">Loss days</option><option value="a">Days with activity</option></select></div>
+        <div><label class="form-label">Sort by</label>
+            <select id="dSort" class="form-select form-select-sm"><option value="date">Date</option><option value="profit">Profit (high-low)</option><option value="netSales">Sales (high-low)</option><option value="expenses">Expenses (high-low)</option></select></div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-hover align-middle mb-0 grid-table" id="dayGrid">
+            <thead><tr><th>Date</th><th class="text-end">Bills</th><th class="text-end">Sales (excl. GST)</th><th class="text-end">GST</th><th class="text-end">Discount</th>
+                <th class="text-end">Tips received</th><th class="text-end">Ingredients</th><th class="text-end">Other exp.</th><th class="text-end">Tips paid</th>
+                <th class="text-end">Total exp.</th><th class="text-end">Profit / Loss</th></tr></thead>
+            <tbody></tbody><tfoot></tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-xl-7">
+        <div class="card data-card h-100">
+            <div class="panel-title">Expense documents in this period</div>
+            <div class="filter-bar">
+                <div><label class="form-label">Type</label>
+                    <select id="eType" class="form-select form-select-sm"><option value="">All</option><option value="Ingredient">Ingredients</option><option>Expense</option><option>Tip</option></select></div>
+                <div class="flex-grow-1"><label class="form-label">Search</label><input id="eText" class="form-control form-control-sm" placeholder="Doc no, supplier, category, waiter" /></div>
+            </div>
+            <div class="table-responsive" style="max-height:420px">
+                <table class="table table-sm table-hover mb-0 grid-table" id="docGrid">
+                    <thead><tr><th>Doc</th><th>Date</th><th>Type</th><th>Party</th><th class="text-end">Total</th><th class="text-end">Paid</th><th class="text-end">Balance</th></tr></thead>
+                    <tbody></tbody><tfoot></tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-5">
+        <div class="card data-card mb-3">
+            <div class="panel-title">Waiter-wise tips (restaurant expense)</div>
+            <div class="table-responsive"><table class="table table-sm mb-0 grid-table" id="tipGrid">
+                <thead><tr><th>Waiter</th><th class="text-end">Bills served</th><th class="text-end">From bills</th><th class="text-end">Paid manually</th><th class="text-end">Total tips</th></tr></thead>
+                <tbody></tbody></table></div>
+        </div>
+        <div class="card data-card">
+            <div class="panel-title">Ingredient purchases by supplier</div>
+            <div class="table-responsive"><table class="table table-sm mb-0 grid-table" id="supGrid">
+                <thead><tr><th>Supplier</th><th class="text-end">Bills</th><th class="text-end">Amount</th><th class="text-end">Balance due</th></tr></thead>
+                <tbody></tbody></table></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+ <script src="~/js/chart.umd.min.js" asp-append-version="true"></script>
+    <script>
+        /* chart text / grid colours follow light or dark mode */
+        (function () { var cs = getComputedStyle(document.body); Chart.defaults.color = cs.color; Chart.defaults.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--line').trim() || 'rgba(128,128,128,.25)'; })();
+    </script> 
+    @* <script src="~/js/chart.umd.min.js" asp-append-version="true"></script> *@
+<script>
+(function () {
+    // Validated categorical palette, assigned in fixed order (never cycled by rank).
+    var PAL = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#6250d6', '#e34948'];
+    var C_INCOME = PAL[0], C_EXP = PAL[1], C_PROFIT = PAL[2];
+    var data = null, charts = {}, types = { trend: 'bar', exp: 'bar', tips: 'bar', modes: 'doughnut', items: 'bar' };
+    function $(id) { return document.getElementById(id); }
+    function m(n) { return '₹' + Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+    function m2(n) { return Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function iso(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+    function nice(s) { var p = s.split('-'); return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }); }
+
+    Chart.defaults.font.family = '"Segoe UI", system-ui, sans-serif';
+    Chart.defaults.color = '#52514e';
+    Chart.defaults.plugins.tooltip.callbacks.label = function (c) {
+        var v = c.parsed && typeof c.parsed === 'object' ? (c.chart.config.type === 'bar' && c.chart.options.indexAxis === 'y' ? c.parsed.x : c.parsed.y) : c.parsed;
+        return ' ' + (c.dataset.label ? c.dataset.label + ': ' : (c.label ? c.label + ': ' : '')) + m(v);
+    };
+
+    function preset(p) {
+        var t = new Date(), f = new Date();
+        if (p === 'yesterday') { f.setDate(f.getDate() - 1); t = new Date(f); }
+        else if (p === '7') f.setDate(f.getDate() - 6);
+        else if (p === '30') f.setDate(f.getDate() - 29);
+        else if (p === 'month') f = new Date(t.getFullYear(), t.getMonth(), 1);
+        else if (p === 'lastmonth') { f = new Date(t.getFullYear(), t.getMonth() - 1, 1); t = new Date(t.getFullYear(), t.getMonth(), 0); }
+        $('from').value = iso(f); $('to').value = iso(t);
+        document.querySelectorAll('#presets .btn').forEach(function (b) { b.classList.toggle('active', b.dataset.p === p); });
+        load();
+    }
+
+    function load() {
+        $('rangeText').textContent = 'Loading...';
+        fetch('/Reports/Data?from=' + $('from').value + '&to=' + $('to').value, { headers: { 'X-Requested-With': 'fetch' } })
+            .then(function (r) { return r.json(); })
+            .then(function (d) { if (d.ok === false) { $('rangeText').textContent = d.message; return; } data = d; render(); })
+            .catch(function () { $('rangeText').textContent = 'Could not load data.'; });
+    }
+
+    function delta(cur, prev, goodUp) {
+        if (!prev && !cur) return '<span class="delta">no change</span>';
+        if (!prev) return '<span class="delta">new</span>';
+        var pc = (cur - prev) / Math.abs(prev) * 100, up = pc >= 0, good = goodUp ? up : !up;
+        return '<span class="delta ' + (good ? 'good' : 'bad') + '"><i class="bi bi-arrow-' + (up ? 'up' : 'down') + '-right"></i> ' + Math.abs(pc).toFixed(1) + '%</span>';
+    }
+
+    function render() {
+        var c = data.current, p = data.previous, t = data.today, y = data.yesterday;
+        $('rangeText').textContent = nice(data.from) + ' - ' + nice(data.to) + '  (compared with ' + nice(data.prevFrom) + ' - ' + nice(data.prevTo) + ')';
+
+        $('quick').innerHTML = [['Today', t, y, 'vs yesterday'], ['Yesterday', y, null, '']].map(function (q) {
+            var s = q[1];
+            return '<div class="col-md-6"><div class="card quick-card"><div class="card-body d-flex flex-wrap gap-3 align-items-center">' +
+                '<div class="fw-bold text-primary" style="min-width:90px">' + q[0] + '</div>' +
+                '<div><small class="text-muted d-block">Sales</small><b>' + m(s.netSales) + '</b></div>' +
+                '<div><small class="text-muted d-block">Expenses</small><b>' + m(s.expenses) + '</b></div>' +
+                '<div><small class="text-muted d-block">Profit</small><b class="' + (s.profit < 0 ? 'text-danger' : 'text-success') + '">' + m(s.profit) + '</b></div>' +
+                (q[2] ? '<div class="ms-auto small">' + delta(s.profit, q[2].profit, true) + ' <span class="text-muted">' + q[3] + '</span></div>' : '') +
+                '</div></div></div>';
+        }).join('');
+
+        var k = [
+            ['Sales (excl. GST)', c.netSales, p.netSales, true, 'bi-cash-stack', c.orders + ' bills · avg ' + m(c.avgBill)],
+            ['Tips received', c.tipsIn, p.tipsIn, true, 'bi-hand-thumbs-up', 'paid out to waiters'],
+            ['Ingredient bills', c.ingredient, p.ingredient, false, 'bi-basket', 'supplier purchases'],
+            ['Other expenses', c.other, p.other, false, 'bi-wallet2', 'rent, power, salary...'],
+            ['Tips paid', c.tips, p.tips, false, 'bi-people', 'waiter tips (expense)'],
+            ['Total expenses', c.expenses, p.expenses, false, 'bi-arrow-down-circle', 'balance due ' + m(c.unpaidBills)],
+            ['GST collected', c.tax, p.tax, true, 'bi-percent', 'not profit - pay to govt'],
+            ['Discounts given', c.discount, p.discount, false, 'bi-ticket-perforated', 'coupons + manual'],
+        ];
+        $('kpis').innerHTML = '<div class="col-12"><div class="profit-hero ' + (c.profit < 0 ? 'loss' : '') + '"><div><small>' + (c.profit < 0 ? 'NET LOSS' : 'NET PROFIT') + '</small>' +
+            '<div class="v">' + m(c.profit) + '</div><div class="small">Income ' + m(c.income) + ' &minus; Expenses ' + m(c.expenses) + '</div></div>' +
+            '<div class="text-end">' + delta(c.profit, p.profit, true) + '<div class="small">vs previous period (' + m(p.profit) + ')</div></div></div></div>' +
+            k.map(function (x) {
+                return '<div class="col-6 col-md-3"><div class="stat"><i class="bi ' + x[4] + '"></i><b>' + m(x[1]) + '</b><span>' + x[0] + '</span>' +
+                    '<div class="small mt-1">' + delta(x[1], x[2], x[3]) + ' <span class="text-muted">' + x[5] + '</span></div></div></div>';
+            }).join('');
+
+        drawTrend(); drawExp(); drawTips(); drawModes(); drawItems();
+        renderDays(); renderDocs(); renderTips(); renderSup();
+    }
+
+    function make(key, el, cfg) { if (charts[key]) charts[key].destroy(); charts[key] = new Chart($(el), cfg); }
+    function baseOpts(horizontal) {
+        var axis = { grid: { color: '#ececea' }, ticks: { callback: function (v) { return m(v); } } };
+        return { responsive: true, maintainAspectRatio: false, indexAxis: horizontal ? 'y' : 'x', interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } },
+            scales: horizontal ? { x: axis, y: { grid: { display: false } } } : { y: axis, x: { grid: { display: false } } } };
+    }
+    function ds(label, values, color, type) {
+        return { label: label, data: values, backgroundColor: color, borderColor: color, borderWidth: type === 'line' ? 2 : 0,
+                 borderRadius: 4, pointRadius: type === 'line' ? 3 : 0, tension: .25, fill: false, maxBarThickness: 28 };
+    }
+    function drawTrend() {
+        var t = types.trend, d = data.days, labels = d.map(function (x) { return nice(x.date); }), sets, metric = $('trendMetric').value, stacked = false;
+        if (metric === 'profit') sets = [ds('Profit', d.map(function (x) { return x.profit; }), C_PROFIT, t)];
+        else if (metric === 'exp') { stacked = t === 'bar'; sets = [ds('Ingredients', d.map(function (x) { return x.ingredient; }), PAL[0], t), ds('Other expenses', d.map(function (x) { return x.other; }), PAL[1], t), ds('Tips paid', d.map(function (x) { return x.tips; }), PAL[2], t)]; }
+        else sets = [ds('Income', d.map(function (x) { return x.netSales + x.tipsIn; }), C_INCOME, t), ds('Expenses', d.map(function (x) { return x.expenses; }), C_EXP, t), ds('Profit', d.map(function (x) { return x.profit; }), C_PROFIT, t)];
+        var o = baseOpts(false);
+        if (stacked) { o.scales.x.stacked = true; o.scales.y.stacked = true; }
+        make('trend', 'cTrend', { type: t, data: { labels: labels, datasets: sets }, options: o });
+    }
+    function simple(key, el, rows, label, valueKey) {
+        var t = types[key], round = t !== 'bar';
+        var o = round ? { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } } } } : baseOpts(true);
+        if (!round) o.plugins.legend.display = false;
+        var top = rows.slice(0, 7), rest = rows.slice(7);
+        if (rest.length) top = top.concat([{ name: 'Other', v: rest.reduce(function (s, r) { return s + r[valueKey]; }, 0), _o: 1 }]);
+        var vals = top.map(function (r) { return r._o ? r.v : r[valueKey]; });
+        var cols = top.map(function (r, i) { return r._o ? '#a3a29c' : PAL[i % PAL.length]; });
+        make(key, el, { type: t, data: { labels: top.map(function (r) { return r.name; }),
+            datasets: [{ label: label, data: vals, backgroundColor: round ? cols : PAL[0], borderColor: '#fff', borderWidth: round ? 2 : 0, borderRadius: round ? 0 : 4, maxBarThickness: 22 }] }, options: o });
+    }
+    function drawExp() { simple('exp', 'cExp', data.expenseBreakdown, 'Amount', 'amount'); }
+    function drawTips() { simple('tips', 'cTips', data.waiterTips, 'Tips', 'total'); }
+    function drawModes() { simple('modes', 'cModes', data.modes, 'Collected', 'amount'); }
+    function drawItems() { simple('items', 'cItems', data.topItems, 'Sales', 'amount'); }
+
+    document.querySelectorAll('.chart-type').forEach(function (s) {
+        s.value = types[s.dataset.chart];
+        s.addEventListener('change', function () { types[s.dataset.chart] = s.value; if (data) render(); });
+    });
+    $('trendMetric').addEventListener('change', function () { if (data) drawTrend(); });
+
+    // ---- grids ----
+    var DAYF = ['orders', 'netSales', 'tax', 'discount', 'tipsIn', 'ingredient', 'other', 'tips', 'expenses', 'profit'];
+    function renderDays() {
+        var f = $('dFilter').value, s = $('dSort').value;
+        var rows = data.days.filter(function (d) {
+            return !f || (f === 'p' && d.profit > 0) || (f === 'l' && d.profit < 0) || (f === 'a' && (d.orders || d.expenses));
+        }).slice();
+        rows.sort(function (a, b) { return s === 'date' ? (a.date < b.date ? 1 : -1) : b[s] - a[s]; });
+        var tot = {}; DAYF.forEach(function (k) { tot[k] = 0; });
+        $('dayGrid').tBodies[0].innerHTML = rows.map(function (d) {
+            DAYF.forEach(function (k) { tot[k] += d[k]; });
+            return '<tr><td>' + nice(d.date) + '</td>' + DAYF.map(function (k) {
+                return '<td class="text-end' + (k === 'profit' ? (d.profit < 0 ? ' text-danger fw-bold' : ' text-success fw-bold') : '') + '">' + (k === 'orders' ? d[k] : m2(d[k])) + '</td>';
+            }).join('') + '</tr>';
+        }).join('') || '<tr><td colspan="11" class="empty-state">No days match.</td></tr>';
+        $('dayGrid').tFoot.innerHTML = '<tr class="fw-bold table-light"><td>Total</td>' + DAYF.map(function (k) {
+            return '<td class="text-end">' + (k === 'orders' ? tot[k] : m2(tot[k])) + '</td>'; }).join('') + '</tr>';
+    }
+    $('dFilter').addEventListener('change', renderDays); $('dSort').addEventListener('change', renderDays);
+
+    function renderDocs() {
+        var t = $('eType').value, q = $('eText').value.toLowerCase(), s = [0, 0, 0];
+        var rows = data.docs.filter(function (d) { return (!t || d.type === t) && (!q || (d.docNo + ' ' + d.party + ' ' + d.type).toLowerCase().indexOf(q) >= 0); });
+        $('docGrid').tBodies[0].innerHTML = rows.map(function (d) {
+            s[0] += d.total; s[1] += d.paid; s[2] += d.balance;
+            return '<tr><td><a href="/Expenses/Details/' + d.id + '">' + esc(d.docNo) + '</a></td><td>' + nice(d.date) + '</td><td>' + (d.type === 'Ingredient' ? 'Ingredients' : d.type) + '</td><td>' + esc(d.party) +
+                '</td><td class="text-end">' + m2(d.total) + '</td><td class="text-end">' + m2(d.paid) + '</td><td class="text-end">' + m2(d.balance) + '</td></tr>';
+        }).join('') || '<tr><td colspan="7" class="empty-state">No expense documents.</td></tr>';
+        $('docGrid').tFoot.innerHTML = '<tr class="fw-bold table-light"><td colspan="4">Total (' + rows.length + ')</td><td class="text-end">' + m2(s[0]) + '</td><td class="text-end">' + m2(s[1]) + '</td><td class="text-end">' + m2(s[2]) + '</td></tr>';
+    }
+    $('eType').addEventListener('change', renderDocs); $('eText').addEventListener('input', renderDocs);
+
+    function renderTips() {
+        $('tipGrid').tBodies[0].innerHTML = data.waiterTips.map(function (w) {
+            return '<tr><td>' + esc(w.name) + '</td><td class="text-end">' + w.bills + '</td><td class="text-end">' + m2(w.fromBills) + '</td><td class="text-end">' + m2(w.manual) + '</td><td class="text-end fw-bold">' + m2(w.total) + '</td></tr>';
+        }).join('') || '<tr><td colspan="5" class="empty-state">No tips in this period.</td></tr>';
+    }
+    function renderSup() {
+        $('supGrid').tBodies[0].innerHTML = data.bySupplier.map(function (s) {
+            return '<tr><td>' + esc(s.name) + '</td><td class="text-end">' + s.bills + '</td><td class="text-end">' + m2(s.amount) + '</td><td class="text-end ' + (s.balance > 0 ? 'text-danger' : '') + '">' + m2(s.balance) + '</td></tr>';
+        }).join('') || '<tr><td colspan="4" class="empty-state">No ingredient bills.</td></tr>';
+    }
+
+    $('csvDays').addEventListener('click', function () {
+        if (!data) return;
+        var head = ['Date', 'Bills', 'Sales excl GST', 'GST', 'Discount', 'Tips received', 'Ingredients', 'Other expenses', 'Tips paid', 'Total expenses', 'Profit'];
+        var csv = [head.join(',')].concat(data.days.map(function (d) { return [d.date].concat(DAYF.map(function (k) { return d[k]; })).join(','); })).join('\r\n');
+        var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+        a.download = 'profit-loss-' + data.from + '-to-' + data.to + '.csv'; a.click();
+    });
+
+    $('presets').addEventListener('click', function (e) { var b = e.target.closest('[data-p]'); if (b) preset(b.dataset.p); });
+    $('go').addEventListener('click', function () { document.querySelectorAll('#presets .btn').forEach(function (b) { b.classList.remove('active'); }); load(); });
+    preset('7');
+})();
+</script>
+}

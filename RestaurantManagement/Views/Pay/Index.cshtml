@@ -1,0 +1,67 @@
+@model PayPageViewModel
+@{
+    Layout = null;
+    var o = Model.Order; var s = Model.Setting;
+    var paid = o.Status == "Paid";
+    var live = o.Items.Where(i => i.Status != "Cancelled").ToList();
+    var hasUpi = !string.IsNullOrWhiteSpace(s.UpiId);
+}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light"><head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Pay @s.RestaurantName</title>
+<script>(function(){try{var t=localStorage.getItem('theme')||'auto';var d=t==='dark'||(t==='auto'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.setAttribute('data-bs-theme',d?'dark':'light');}catch(e){}})();</script>
+<link href="~/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+<link href="~/css/bootstrap-icons.min.css" rel="stylesheet" asp-append-version="true" />
+<link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+<style>.cardx{max-width:460px;margin:18px auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-md);overflow:hidden}.hd{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;padding:20px 22px}.amt{font-size:38px;font-weight:800;color:var(--brand-text);line-height:1.1}</style>
+</head>
+<body style="padding:0 12px">
+<div class="cardx">
+  <div class="hd"><div class="fs-5 fw-bold">@s.RestaurantName</div><small>Bill @o.OrderNo @(o.OrderType == "Parcel" ? "(Parcel)" : "")</small></div>
+  <div class="p-3">
+    @if (TempData["Success"] != null) { <div class="alert alert-success py-2">@TempData["Success"]</div> }
+    @if (TempData["Error"] != null) { <div class="alert alert-danger py-2">@TempData["Error"]</div> }
+
+    @foreach (var i in live) { <div class="d-flex justify-content-between small"><span>@i.Quantity &times; @i.ItemName</span><span>@i.LineTotal.ToString("N2")</span></div> }
+    <hr />
+    @if (paid)
+    {
+        <div class="text-center py-3"><i class="bi bi-check-circle-fill text-success" style="font-size:54px"></i><h4 class="mt-2">Payment received</h4><p class="text-muted">Thank you! Visit again.</p></div>
+    }
+    else if (!hasUpi)
+    {
+        <div class="alert alert-warning">Online payment is not set up. Please pay at the counter. Amount due: <b>&#8377;@o.DueAmount.ToString("N2")</b></div>
+    }
+    else
+    {
+        <div class="text-center">
+            <div class="text-muted">Amount to pay</div>
+            <div class="amt">&#8377;@o.DueAmount.ToString("N2")</div>
+            <a class="btn btn-success btn-lg w-100 my-2" href="@Model.UpiLink"><i class="bi bi-phone"></i> Pay with any UPI app</a>
+            <div class="row g-2 mb-3">
+                <div class="col-4"><a class="btn btn-outline-secondary w-100" href="@Model.GPayLink">GPay</a></div>
+                <div class="col-4"><a class="btn btn-outline-secondary w-100" href="@Model.PhonePeLink">PhonePe</a></div>
+                <div class="col-4"><a class="btn btn-outline-secondary w-100" href="@Model.PaytmLink">Paytm</a></div>
+            </div>
+            <div class="text-muted small mb-1">On another phone? Scan this QR with any UPI app</div>
+            <div id="qr"></div>
+            <div class="mt-2 small text-muted">UPI ID: <b>@s.UpiId</b>@if (!string.IsNullOrWhiteSpace(s.OwnerMobile)) { <text> &middot; Mobile: <b>@s.OwnerMobile</b></text> }</div>
+        </div>
+        <hr />
+        <form method="post" action="/Pay/@o.PayToken/utr">
+            @Html.AntiForgeryToken()
+            <label class="form-label small fw-semibold">Already paid? Enter the UPI reference number</label>
+            <div class="input-group"><input name="utr" class="form-control" placeholder="12-digit UPI Ref / UTR" maxlength="40" value="@o.CustomerUtr" /><button class="btn btn-primary">Submit</button></div>
+            <div class="form-text">The cashier confirms your payment after checking it.</div>
+        </form>
+    }
+  </div>
+</div>
+@if (!paid && hasUpi)
+{
+     <script src="~/js/qrcode.min.js" asp-append-version="true"></script>
+        @*  <script src="~/js/qrcode.min.js" asp-append-version="true"></script> *@
+    <script>new QRCode(document.getElementById('qr'), { text: @Json.Serialize(Model.UpiLink), width: 190, height: 190 });</script>
+}
+</body></html>

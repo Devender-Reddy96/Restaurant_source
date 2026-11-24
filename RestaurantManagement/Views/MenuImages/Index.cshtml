@@ -1,0 +1,103 @@
+@model List<FoodItem>
+@{
+    ViewData["Title"] = "Menu Images";
+    var exists = (Dictionary<int, bool>)ViewBag.Exists;
+    var missing = exists.Count(x => !x.Value);
+}
+@Html.AntiForgeryToken()
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-images"></i> Menu Images</h1>
+        <p class="page-sub">Download a photo for every menu item straight into this application (wwwroot/uploads/menu). Source: Wikipedia / Wikimedia Commons.</p>
+    </div>
+    <button class="btn btn-primary" id="fetchAll"><i class="bi bi-cloud-download"></i> Download all missing (<span id="missCount">@missing</span>)</button>
+</div>
+
+<div class="alert alert-light border small">
+    The <b>Image source</b> is the Wikipedia page title for the dish (filled by <code>04_Phase3_Update.sql</code>). Change it and press
+    <i class="bi bi-arrow-repeat"></i> to get a different photo. To use your own photo, open the item under <a asp-controller="FoodItems" asp-action="Index">Food Items</a> and upload it.
+    Wikimedia photos carry their own licences (mostly CC BY / CC BY-SA) &ndash; replace them with your own photos before publishing the menu.
+</div>
+
+<div class="card mb-3 d-none" id="progressCard"><div class="card-body">
+    <div class="d-flex justify-content-between small mb-1"><span id="progText">Starting...</span><span id="progPct">0%</span></div>
+    <div class="progress"><div class="progress-bar" id="progBar" style="width:0%"></div></div>
+</div></div>
+
+<div class="card data-card">
+    <div class="card-toolbar">
+        <div class="search-wrap"><i class="bi bi-search"></i><input class="form-control search-box" data-table="#dataTable" placeholder="Search dish..." /></div>
+        <select id="showFilter" class="form-select form-select-sm" style="width:auto">
+            <option value="">All items (@Model.Count)</option><option value="missing">Missing photo</option><option value="ok">Has photo</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="dataTable">
+            <thead><tr><th>Photo</th><th>Dish</th><th>Category</th><th style="min-width:220px">Image source (Wikipedia title)</th><th>Status</th><th class="text-end"></th></tr></thead>
+            <tbody>
+            @foreach (var f in Model)
+            {
+                var ok = exists[f.FoodItemId];
+                <tr data-id="@f.FoodItemId" data-state="@(ok ? "ok" : "missing")">
+                    <td>@if (ok) { <img src="@f.ImagePath" class="thumb" alt="" loading="lazy" /> } else { <span class="thumb thumb-empty"><i class="bi bi-image"></i></span> }</td>
+                    <td class="fw-semibold">@f.FoodName <small class="text-muted d-block">@f.ItemCode</small></td>
+                    <td>@f.Category?.CategoryName</td>
+                    <td><input class="form-control form-control-sm src" value="@f.ImageSource" placeholder="@f.FoodName" maxlength="200" /></td>
+                    <td class="st">@if (ok) { <span class="badge b-yes">Downloaded</span> } else { <span class="badge b-no">Missing</span> }</td>
+                    <td class="text-end"><button class="btn btn-sm btn-outline-primary one" title="Download this photo"><i class="bi bi-arrow-repeat"></i></button></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    function row(id) { return document.querySelector('#dataTable tr[data-id="' + id + '"]'); }
+    function show(id, ok, msg, path) {
+        var tr = row(id); if (!tr) return;
+        tr.dataset.state = ok ? 'ok' : 'missing';
+        tr.cells[0].innerHTML = ok ? '<img src="' + path + '?v=' + Date.now() + '" class="thumb" alt="">' : '<span class="thumb thumb-empty"><i class="bi bi-image"></i></span>';
+        tr.querySelector('.st').innerHTML = ok ? '<span class="badge b-yes">Downloaded</span>' : '<span class="badge b-cancelled" title="' + String(msg).replace(/"/g, '&quot;') + '">Failed</span>';
+    }
+    document.getElementById('dataTable').addEventListener('change', function (e) {
+        if (!e.target.classList.contains('src')) return;
+        Pos.postForm('/MenuImages/SetSource', { id: e.target.closest('tr').dataset.id, source: e.target.value });
+    });
+    document.getElementById('dataTable').addEventListener('click', function (e) {
+        var b = e.target.closest('.one'); if (!b) return;
+        var tr = b.closest('tr'), id = tr.dataset.id; b.disabled = true;
+        Pos.postForm('/MenuImages/SetSource', { id: id, source: tr.querySelector('.src').value })
+            .then(function () { return Pos.postForm('/MenuImages/FetchOne', { id: id }); })
+            .then(function (r) { show(id, r.ok, r.message, r.path); if (!r.ok) alert(r.message); b.disabled = false; })
+            .catch(function () { b.disabled = false; alert('Could not reach the server.'); });
+    });
+    document.getElementById('showFilter').addEventListener('change', function () {
+        var v = this.value;
+        document.querySelectorAll('#dataTable tbody tr').forEach(function (tr) { tr.style.display = !v || tr.dataset.state === v ? '' : 'none'; });
+    });
+
+    var total = @missing, done = 0, okCount = 0;
+    document.getElementById('fetchAll').addEventListener('click', function () {
+        var btn = this; btn.disabled = true;
+        document.getElementById('progressCard').classList.remove('d-none');
+        function step(skip) {
+            Pos.postForm('/MenuImages/FetchMissing', { skip: skip, take: 8 }).then(function (r) {
+                if (!r.ok) { document.getElementById('progText').textContent = r.message || 'Stopped.'; btn.disabled = false; return; }
+                r.items.forEach(function (it) { done++; if (it.ok) okCount++; show(it.id, it.ok, it.message, it.path); });
+                var pct = total ? Math.round(done * 100 / total) : 100;
+                document.getElementById('progBar').style.width = pct + '%';
+                document.getElementById('progPct').textContent = pct + '%';
+                document.getElementById('progText').textContent = okCount + ' downloaded, ' + (done - okCount) + ' not found - ' + r.remaining + ' left';
+                document.getElementById('missCount').textContent = r.remaining + (done - okCount);
+                if (r.remaining > 0 && r.items.length) step(r.nextSkip);
+                else { btn.disabled = false; document.getElementById('progText').textContent += ' - finished.'; }
+            }).catch(function () { document.getElementById('progText').textContent = 'Network error - press the button again to continue.'; btn.disabled = false; });
+        }
+        step(0);
+    });
+})();
+</script>
+}

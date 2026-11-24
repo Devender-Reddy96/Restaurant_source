@@ -1,0 +1,33 @@
+@{ ViewData["Title"] = "Kitchen Display"; }
+@Html.AntiForgeryToken()
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-fire"></i> Kitchen Display</h1>
+        <p class="page-sub">Orders appear here in the order they were placed. Mark each dish Cooking, then Ready &mdash; the waiter is alerted instantly.</p>
+    </div>
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+        <form method="get" class="d-flex gap-2">
+            <select name="stationId" class="form-select" onchange="this.form.submit()">
+                <option value="">All stations</option>
+                @foreach (var s in (IEnumerable<SelectListItem>)ViewBag.Stations)
+                {
+                    <option value="@s.Value" selected="@s.Selected">@s.Text</option>
+                }
+            </select>
+        </form>
+        <button type="button" id="alertBtn" class="btn btn-outline-warning"><i class="bi bi-bell"></i> Enable alerts</button>
+    </div>
+</div>
+<div id="board"></div>
+
+@section Scripts {
+<script>
+    var stationId = '@(ViewBag.StationId)';
+    document.getElementById('alertBtn').addEventListener('click', function () { Pos.enableAlerts(this); });
+    var refresh = Pos.poll({
+        url: function () { return '/Kitchen/Board' + (stationId ? '?stationId=' + stationId : ''); },
+        container: '#board', interval: 4000, alertTitle: 'Kitchen', alertText: 'new dish(es) to cook'
+    });
+    Pos.wirePostButtons(refresh);
+</script>
+}

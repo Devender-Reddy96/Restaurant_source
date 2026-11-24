@@ -1,0 +1,223 @@
+@model RestaurantExpense
+@{
+    var isNew = Model.RestaurantExpenseId == 0;
+    ViewData["Title"] = isNew ? "New Expense Document" : "Edit " + Model.DocNo;
+    var suppliers = (List<IdName>)ViewBag.Suppliers;
+    var categories = (List<IdName>)ViewBag.Categories;
+    var waiters = (List<IdName>)ViewBag.Waiters;
+    var modes = (List<string>)ViewBag.Modes;
+    var doc = new
+    {
+        id = isNew ? (int?)null : Model.RestaurantExpenseId,
+        expenseType = Model.ExpenseType,
+        expenseDate = Model.ExpenseDate.ToString("yyyy-MM-dd"),
+        supplierId = Model.SupplierId, expenseCategoryId = Model.ExpenseCategoryId, employeeId = Model.EmployeeId,
+        billNo = Model.BillNo, description = Model.Description,
+        amount = Model.SubTotal, taxPercent = Model.TaxPercent, discountPercent = Model.DiscountPercent,
+        paidAmount = Model.PaidAmount, paymentMode = Model.PaymentMode, referenceNo = Model.ReferenceNo,
+        items = Model.Items.Select(i => new { ingredientId = i.IngredientId, quantity = i.Quantity, costPerUnit = i.CostPerUnit, reorderLevel = i.ReorderLevel }).ToList()
+    };
+}
+@Html.AntiForgeryToken()
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-journal-minus"></i> @(isNew ? "New Expense Document" : "Edit " + Model.DocNo)</h1>
+        <p class="page-sub">Ingredient bills, other expenses and waiter tips. These are restaurant expenses &ndash; not profit.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<div class="card form-card mb-3"><div class="card-body">
+    <div class="type-switch mb-3" id="typeSwitch">
+        <button type="button" class="btn" data-t="Ingredient"><i class="bi bi-basket"></i> Ingredients</button>
+        <button type="button" class="btn" data-t="Expense"><i class="bi bi-wallet2"></i> Expense</button>
+        <button type="button" class="btn" data-t="Tip"><i class="bi bi-cash-coin"></i> Tips</button>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-6 col-md-3"><label class="form-label req">Date</label><input type="date" id="expenseDate" class="form-control" /></div>
+        <div class="col-12 col-md-5 t-Ingredient"><label class="form-label req">Supplier</label>
+            <select id="supplierId" class="form-select"><option value="">-- select supplier --</option>
+                @foreach (var x in suppliers) { <option value="@x.Id">@x.Name</option> }</select></div>
+        <div class="col-12 col-md-5 t-Expense"><label class="form-label req">Expense category</label>
+            <select id="expenseCategoryId" class="form-select"><option value="">-- select category --</option>
+                @foreach (var x in categories) { <option value="@x.Id">@x.Name</option> }</select></div>
+        <div class="col-12 col-md-5 t-Tip"><label class="form-label req">Waiter / table bearer</label>
+            <select id="employeeId" class="form-select"><option value="">-- select waiter --</option>
+                @foreach (var x in waiters) { <option value="@x.Id">@x.Name</option> }</select></div>
+        <div class="col-6 col-md-4 t-Ingredient t-Expense"><label class="form-label">Bill / invoice no.</label><input id="billNo" class="form-control" maxlength="50" /></div>
+        <div class="col-12"><label class="form-label">Description</label><input id="description" class="form-control" maxlength="300" placeholder="Optional note" /></div>
+    </div>
+</div></div>
+
+<div class="card data-card mb-3 t-Ingredient">
+    <div class="panel-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span>Ingredients in this bill</span>
+        <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="addAll"><i class="bi bi-list-check"></i> List all ingredients</button>
+            <button type="button" class="btn btn-sm btn-primary" id="addRow"><i class="bi bi-plus-lg"></i> Add ingredient</button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle mb-0" id="lines">
+            <thead><tr><th style="min-width:200px">Ingredient</th><th>Unit</th><th style="width:120px">Reorder level</th><th style="width:130px">Cost / unit</th><th style="width:120px">Quantity</th><th class="text-end" style="width:120px">Amount</th><th></th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="p-3 border-top">
+        <div class="form-check"><input class="form-check-input" type="checkbox" id="updateMaster" checked />
+            <label class="form-check-label" for="updateMaster">Save the edited <b>reorder level</b> and <b>cost per unit</b> back to the Ingredients master</label></div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card form-card"><div class="card-body">
+            <div class="row g-3">
+                <div class="col-12 t-Expense t-Tip"><label class="form-label req">Amount</label><input id="amount" type="number" step="0.01" min="0" class="form-control" /></div>
+                <div class="col-6 t-Ingredient t-Expense"><label class="form-label">Tax %</label><input id="taxPercent" type="number" step="0.01" min="0" max="100" class="form-control" /></div>
+                <div class="col-6 t-Ingredient t-Expense"><label class="form-label">Discount %</label><input id="discountPercent" type="number" step="0.01" min="0" max="100" class="form-control" /></div>
+                <div class="col-6"><label class="form-label">Payment mode</label>
+                    <select id="paymentMode" class="form-select">@foreach (var m in modes) { <option>@m</option> }</select></div>
+                <div class="col-6"><label class="form-label">Reference no.</label><input id="referenceNo" class="form-control" maxlength="60" /></div>
+                <div class="col-12"><label class="form-label">Paid amount</label>
+                    <div class="input-group"><input id="paidAmount" type="number" step="0.01" min="0" class="form-control" />
+                        <button type="button" class="btn btn-outline-secondary" id="payFull">Paid in full</button></div></div>
+            </div>
+        </div></div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card panel"><div class="panel-title"><i class="bi bi-receipt"></i> Bill</div>
+            <div class="card-body bill-sum">
+                <div><span>Sub-total</span><b id="sSub"></b></div>
+                <div class="t-Ingredient t-Expense"><span>Tax (<span id="sTaxP"></span>%)</span><b id="sTax"></b></div>
+                <div class="t-Ingredient t-Expense"><span>Discount (<span id="sDiscP"></span>%)</span><b id="sDisc"></b></div>
+                <div class="fs-5 border-top pt-2"><span>Bill total</span><b id="sGrand"></b></div>
+                <div class="text-success"><span>Paid</span><b id="sPaid"></b></div>
+                <div class="text-danger"><span>Balance to pay</span><b id="sBal"></b></div>
+                <div id="msg" class="mt-2"></div>
+                <button type="button" class="btn btn-primary w-100 big-btn mt-2" id="saveBtn"><i class="bi bi-check2-circle"></i> Save document</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    var ING = @Json.Serialize(ViewBag.Ingredients), DOC = @Json.Serialize(doc), IS_NEW = @Json.Serialize(isNew);
+    var type = DOC.expenseType;
+    function $(id) { return document.getElementById(id); }
+    function num(v) { var n = Number(v); return isFinite(n) ? n : 0; }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+    // ---- fill form ----
+    $('expenseDate').value = DOC.expenseDate;
+    ['supplierId', 'expenseCategoryId', 'employeeId', 'billNo', 'description', 'referenceNo'].forEach(function (k) { if (DOC[k] != null) $(k).value = DOC[k]; });
+    if (DOC.paymentMode) $('paymentMode').value = DOC.paymentMode;
+    $('amount').value = DOC.amount || '';
+    $('taxPercent').value = DOC.taxPercent || 0;
+    $('discountPercent').value = DOC.discountPercent || 0;
+    $('paidAmount').value = DOC.paidAmount || 0;
+
+    function setType(t) {
+        type = t;
+        document.querySelectorAll('#typeSwitch .btn').forEach(function (b) {
+            b.classList.toggle('btn-primary', b.dataset.t === t); b.classList.toggle('btn-outline-primary', b.dataset.t !== t);
+            b.disabled = !IS_NEW && b.dataset.t !== t;
+        });
+        document.querySelectorAll('.t-Ingredient, .t-Expense, .t-Tip').forEach(function (el) {
+            el.style.display = el.classList.contains('t-' + t) ? '' : 'none';
+        });
+        calc();
+    }
+    $('typeSwitch').addEventListener('click', function (e) { var b = e.target.closest('[data-t]'); if (b && !b.disabled) setType(b.dataset.t); });
+
+    // ---- ingredient lines ----
+    function optList(sel) {
+        return '<option value="">-- select --</option>' + ING.map(function (g) {
+            return '<option value="' + g.id + '"' + (g.id === sel ? ' selected' : '') + '>' + esc(g.name) + '</option>';
+        }).join('');
+    }
+    function addLine(l) {
+        l = l || {};
+        var g = ING.filter(function (x) { return x.id === l.ingredientId; })[0];
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td><select class="form-select form-select-sm ing">' + optList(l.ingredientId) + '</select></td>' +
+            '<td class="unit text-muted">' + esc(g ? g.unit : '') + '</td>' +
+            '<td><input type="number" step="0.01" min="0" class="form-control form-control-sm rl" value="' + (l.reorderLevel != null ? l.reorderLevel : (g ? g.reorder : '')) + '"></td>' +
+            '<td><input type="number" step="0.01" min="0" class="form-control form-control-sm cpu" value="' + (l.costPerUnit != null ? l.costPerUnit : (g ? g.cost : '')) + '"></td>' +
+            '<td><input type="number" step="0.001" min="0" class="form-control form-control-sm qty" value="' + (l.quantity != null ? l.quantity : '') + '"></td>' +
+            '<td class="text-end amt fw-semibold"></td>' +
+            '<td class="text-end"><button type="button" class="btn btn-sm btn-link text-danger del"><i class="bi bi-x-circle"></i></button></td>';
+        $('lines').tBodies[0].appendChild(tr);
+        calc();
+    }
+    $('addRow').addEventListener('click', function () { addLine(); });
+    $('addAll').addEventListener('click', function () {
+        var have = lines().map(function (l) { return l.ingredientId; });
+        ING.forEach(function (g) { if (have.indexOf(g.id) < 0) addLine({ ingredientId: g.id }); });
+    });
+    $('lines').addEventListener('change', function (e) {
+        if (!e.target.classList.contains('ing')) return;
+        var tr = e.target.closest('tr'), g = ING.filter(function (x) { return x.id === Number(e.target.value); })[0];
+        tr.querySelector('.unit').textContent = g ? g.unit : '';
+        tr.querySelector('.rl').value = g ? g.reorder : '';
+        tr.querySelector('.cpu').value = g ? g.cost : '';
+        calc();
+    });
+    $('lines').addEventListener('input', calc);
+    $('lines').addEventListener('click', function (e) { var b = e.target.closest('.del'); if (b) { b.closest('tr').remove(); calc(); } });
+
+    function lines() {
+        return Array.prototype.map.call($('lines').tBodies[0].rows, function (tr) {
+            return { ingredientId: Number(tr.querySelector('.ing').value) || 0, reorderLevel: num(tr.querySelector('.rl').value),
+                     costPerUnit: num(tr.querySelector('.cpu').value), quantity: num(tr.querySelector('.qty').value), tr: tr };
+        });
+    }
+
+    // ---- totals ----
+    var grand = 0;
+    function r2(n) { return Math.round(n * 100) / 100; }
+    function calc() {
+        var sub = 0;
+        if (type === 'Ingredient') lines().forEach(function (l) { var a = r2(l.quantity * l.costPerUnit); l.tr.querySelector('.amt').textContent = Pos.money(a); sub += a; });
+        else sub = r2(num($('amount').value));
+        var tp = type === 'Tip' ? 0 : num($('taxPercent').value), dp = type === 'Tip' ? 0 : num($('discountPercent').value);
+        var tax = r2(sub * tp / 100), disc = r2(sub * dp / 100); grand = r2(sub + tax - disc);
+        var paid = num($('paidAmount').value);
+        $('sSub').textContent = Pos.money(sub); $('sTaxP').textContent = tp; $('sTax').textContent = Pos.money(tax);
+        $('sDiscP').textContent = dp; $('sDisc').textContent = '- ' + Pos.money(disc); $('sGrand').textContent = Pos.money(grand);
+        $('sPaid').textContent = Pos.money(paid); $('sBal').textContent = Pos.money(Math.max(0, grand - paid));
+    }
+    ['amount', 'taxPercent', 'discountPercent', 'paidAmount'].forEach(function (id) { $(id).addEventListener('input', calc); });
+    $('payFull').addEventListener('click', function () { $('paidAmount').value = grand.toFixed(2); calc(); });
+
+    // ---- save ----
+    $('saveBtn').addEventListener('click', function () {
+        var btn = this, msg = $('msg');
+        var req = {
+            id: DOC.id, expenseType: type, expenseDate: $('expenseDate').value,
+            supplierId: Number($('supplierId').value) || null, expenseCategoryId: Number($('expenseCategoryId').value) || null,
+            employeeId: Number($('employeeId').value) || null, billNo: $('billNo').value, description: $('description').value,
+            amount: num($('amount').value), taxPercent: num($('taxPercent').value), discountPercent: num($('discountPercent').value),
+            paidAmount: num($('paidAmount').value), paymentMode: $('paymentMode').value, referenceNo: $('referenceNo').value,
+            updateMaster: $('updateMaster').checked,
+            items: type === 'Ingredient' ? lines().filter(function (l) { return l.ingredientId && l.quantity > 0; })
+                .map(function (l) { return { ingredientId: l.ingredientId, quantity: l.quantity, costPerUnit: l.costPerUnit, reorderLevel: l.reorderLevel }; }) : []
+        };
+        if (!req.expenseDate) { msg.innerHTML = '<div class="alert alert-danger py-2 mb-0">Select the date.</div>'; return; }
+        btn.disabled = true; msg.innerHTML = '';
+        Pos.postJson(IS_NEW ? '/Expenses/Create' : '/Expenses/Edit', req).then(function (r) {
+            if (!r.ok) { msg.innerHTML = '<div class="alert alert-danger py-2 mb-0">' + esc(r.message) + '</div>'; btn.disabled = false; return; }
+            location.href = '/Expenses/Details/' + r.id;
+        }).catch(function () { msg.innerHTML = '<div class="alert alert-danger py-2 mb-0">Could not reach the server.</div>'; btn.disabled = false; });
+    });
+
+    (DOC.items || []).forEach(addLine);
+    if (type === 'Ingredient' && !DOC.items.length) addLine();
+    setType(type);
+})();
+</script>
+}

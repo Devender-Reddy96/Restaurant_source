@@ -1,0 +1,99 @@
+@model List<RestaurantExpense>
+@{
+    ViewData["Title"] = "Restaurant Expenses";
+    DateOnly from = ViewBag.From, to = ViewBag.To;
+    decimal Sum(string t) => Model.Where(x => x.ExpenseType == t).Sum(x => x.GrandTotal);
+}
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-journal-minus"></i> Restaurant Expenses</h1>
+        <p class="page-sub">Ingredient bills, other expenses and waiter tips &ndash; money spent by the restaurant (not profit).</p>
+    </div>
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-plus-lg"></i> New document</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" asp-action="Create" asp-route-type="Ingredient"><i class="bi bi-basket"></i> Ingredients bill</a></li>
+            <li><a class="dropdown-item" asp-action="Create" asp-route-type="Expense"><i class="bi bi-wallet2"></i> Expense</a></li>
+            <li><a class="dropdown-item" asp-action="Create" asp-route-type="Tip"><i class="bi bi-cash-coin"></i> Tip to waiter</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-3"><div class="stat"><i class="bi bi-basket"></i><b>&#8377;@Sum("Ingredient").ToString("N0")</b><span>Ingredients</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><i class="bi bi-wallet2"></i><b>&#8377;@Sum("Expense").ToString("N0")</b><span>Other expenses</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><i class="bi bi-cash-coin"></i><b>&#8377;@Sum("Tip").ToString("N0")</b><span>Tips to waiters</span></div></div>
+    <div class="col-6 col-md-3"><div class="stat"><i class="bi bi-hourglass-split"></i><b>&#8377;@Model.Sum(x => x.Balance).ToString("N0")</b><span>Balance still to pay</span></div></div>
+</div>
+
+<div class="card data-card">
+    <form method="get" class="filter-bar">
+        <div><label class="form-label">From</label><input type="date" name="from" value="@from.ToString("yyyy-MM-dd")" class="form-control form-control-sm" /></div>
+        <div><label class="form-label">To</label><input type="date" name="to" value="@to.ToString("yyyy-MM-dd")" class="form-control form-control-sm" /></div>
+        <div class="align-self-end"><button class="btn btn-sm btn-primary w-100"><i class="bi bi-funnel"></i> Load</button></div>
+        <div><label class="form-label">Type</label>
+            <select id="fType" class="form-select form-select-sm"><option value="">All</option><option value="Ingredient">Ingredients</option><option>Expense</option><option>Tip</option></select></div>
+        <div><label class="form-label">Payment</label>
+            <select id="fPay" class="form-select form-select-sm"><option value="">All</option><option value="paid">Fully paid</option><option value="due">Balance due</option></select></div>
+        <div class="flex-grow-1"><label class="form-label">Search</label><input id="fText" class="form-control form-control-sm" placeholder="Doc no, supplier, category, waiter, ingredient..." /></div>
+    </form>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle mb-0 grid-table" id="expGrid">
+            <thead><tr><th>Doc no</th><th>Date</th><th>Type</th><th>Supplier / Category / Waiter</th><th>Details</th>
+                <th class="text-end">Sub-total</th><th class="text-end">Tax</th><th class="text-end">Discount</th><th class="text-end">Bill total</th>
+                <th class="text-end">Paid</th><th class="text-end">Balance</th><th>Mode</th><th class="text-end"></th></tr></thead>
+            <tbody>
+            @foreach (var e in Model)
+            {
+                <tr data-type="@e.ExpenseType" data-pay="@(e.Balance > 0 ? "due" : "paid")" data-v="@e.SubTotal|@e.TaxAmount|@e.DiscountAmount|@e.GrandTotal|@e.PaidAmount|@e.Balance">
+                    <td class="fw-semibold">@e.DocNo</td>
+                    <td class="text-nowrap">@e.ExpenseDate.ToString("dd MMM yy")</td>
+                    <td><span class="badge @(e.ExpenseType == "Ingredient" ? "b-veg" : e.ExpenseType == "Tip" ? "b-upi" : "b-flat")">@(e.ExpenseType == "Ingredient" ? "Ingredients" : e.ExpenseType)</span></td>
+                    <td>@e.PartyName</td>
+                    <td class="small text-muted">@(e.Items.Any() ? string.Join(", ", e.Items.Select(i => i.IngredientName + " " + i.Quantity.ToString("0.###") + i.UnitName)) : e.Description)</td>
+                    <td class="text-end">@e.SubTotal.ToString("N2")</td>
+                    <td class="text-end">@e.TaxAmount.ToString("N2") <small class="text-muted">@(e.TaxPercent > 0 ? e.TaxPercent.ToString("0.##") + "%" : "")</small></td>
+                    <td class="text-end">@e.DiscountAmount.ToString("N2") <small class="text-muted">@(e.DiscountPercent > 0 ? e.DiscountPercent.ToString("0.##") + "%" : "")</small></td>
+                    <td class="text-end fw-semibold">@e.GrandTotal.ToString("N2")</td>
+                    <td class="text-end">@e.PaidAmount.ToString("N2")</td>
+                    <td class="text-end @(e.Balance > 0 ? "text-danger fw-semibold" : "")">@e.Balance.ToString("N2")</td>
+                    <td>@e.PaymentMode</td>
+                    <td class="text-end text-nowrap">
+                        <a asp-action="Details" asp-route-id="@e.RestaurantExpenseId" class="btn btn-sm btn-outline-secondary" title="View / print"><i class="bi bi-eye"></i></a>
+                        @if (e.OrderId == null) { <a asp-action="Edit" asp-route-id="@e.RestaurantExpenseId" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a> }
+                        <form asp-action="Delete" asp-route-id="@e.RestaurantExpenseId" method="post" class="d-inline" data-confirm="Delete document @e.DocNo?">
+                            <button class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            @if (!Model.Any()) { <tr class="empty"><td colspan="13" class="empty-state"><i class="bi bi-inbox"></i><br />No expense documents for these dates.</td></tr> }
+            </tbody>
+            <tfoot><tr class="fw-bold table-light"><td colspan="5">Total (<span id="tCount"></span>)</td>
+                <td class="text-end" id="t0"></td><td class="text-end" id="t1"></td><td class="text-end" id="t2"></td><td class="text-end" id="t3"></td>
+                <td class="text-end" id="t4"></td><td class="text-end" id="t5"></td><td colspan="2"></td></tr></tfoot>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    var rows = Array.prototype.slice.call(document.querySelectorAll('#expGrid tbody tr:not(.empty)'));
+    function apply() {
+        var t = document.getElementById('fType').value, p = document.getElementById('fPay').value, q = document.getElementById('fText').value.toLowerCase();
+        var s = [0, 0, 0, 0, 0, 0], n = 0;
+        rows.forEach(function (r) {
+            var ok = (!t || r.dataset.type === t) && (!p || r.dataset.pay === p) && (!q || r.textContent.toLowerCase().indexOf(q) >= 0);
+            r.style.display = ok ? '' : 'none';
+            if (ok) { n++; r.dataset.v.split('|').forEach(function (v, i) { s[i] += Number(v); }); }
+        });
+        document.getElementById('tCount').textContent = n;
+        s.forEach(function (v, i) { document.getElementById('t' + i).textContent = v.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); });
+    }
+    ['fType', 'fPay'].forEach(function (id) { document.getElementById(id).addEventListener('change', apply); });
+    document.getElementById('fText').addEventListener('input', apply);
+    apply();
+})();
+</script>
+}

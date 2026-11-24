@@ -1,0 +1,94 @@
+@model Employee
+@{
+    var isNew = Model.EmployeeId == 0;
+    ViewData["Title"] = (isNew ? "Add " : "Edit ") + "Staff Member";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-people"></i> @(isNew ? "Add" : "Edit") Staff Member</h1>
+        <p class="page-sub">Add chefs, waiters, cashiers and all other staff members.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to list</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.EmployeeId.ToString())" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="EmployeeId" />
+            <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="EmployeeCode" class="form-label req"></label>
+            <input asp-for="EmployeeCode" type="text" class="form-control" maxlength="20" />
+            <span asp-validation-for="EmployeeCode" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="FullName" class="form-label req"></label>
+            <input asp-for="FullName" type="text" class="form-control" maxlength="100" />
+            <span asp-validation-for="FullName" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="DesignationId" class="form-label req"></label>
+            <select asp-for="DesignationId" asp-items="(SelectList)ViewBag.DesignationIdList" class="form-select"><option value="">-- Select --</option></select>
+            <span asp-validation-for="DesignationId" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="ShiftId" class="form-label"></label>
+            <select asp-for="ShiftId" asp-items="(SelectList)ViewBag.ShiftIdList" class="form-select"><option value="">-- Select --</option></select>
+            <span asp-validation-for="ShiftId" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="BranchId" class="form-label"></label>
+            <select asp-for="BranchId" asp-items="(SelectList)ViewBag.BranchIdList" class="form-select"><option value="">-- Select --</option></select>
+            <span asp-validation-for="BranchId" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Phone" class="form-label"></label>
+            <input asp-for="Phone" type="text" class="form-control" maxlength="20" />
+            <span asp-validation-for="Phone" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" type="email" class="form-control" maxlength="100" />
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Gender" class="form-label"></label>
+            <select asp-for="Gender" class="form-select"><option value="">-- Select --</option><option>Male</option><option>Female</option><option>Other</option></select>
+            <span asp-validation-for="Gender" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="DateOfBirth" class="form-label"></label>
+            <input type="date" id="DateOfBirth" name="DateOfBirth" class="form-control" value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd"))" />
+            <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="JoiningDate" class="form-label"></label>
+            <input type="date" id="JoiningDate" name="JoiningDate" class="form-control" value="@(Model.JoiningDate?.ToString("yyyy-MM-dd"))" />
+            <span asp-validation-for="JoiningDate" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Salary" class="form-label"></label>
+            <input asp-for="Salary" type="number" min="0" step="0.01" class="form-control" />
+            <span asp-validation-for="Salary" class="text-danger small"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="Address" class="form-label"></label>
+            <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Address" class="text-danger small"></span>
+        </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mt-md-4 pt-md-2">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> @(isNew ? "Save" : "Update")</button>
+                <a asp-action="Index" class="btn btn-light">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

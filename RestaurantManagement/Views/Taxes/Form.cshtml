@@ -1,0 +1,45 @@
+@model Tax
+@{
+    var isNew = Model.TaxId == 0;
+    ViewData["Title"] = (isNew ? "Add " : "Edit ") + "Tax";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-percent"></i> @(isNew ? "Add" : "Edit") Tax</h1>
+        <p class="page-sub">GST / tax slabs applied to food items. Confirm rates with your accountant.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to list</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.TaxId.ToString())" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="TaxId" />
+            <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="TaxName" class="form-label req"></label>
+            <input asp-for="TaxName" type="text" class="form-control" maxlength="100" />
+            <span asp-validation-for="TaxName" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="TaxPercentage" class="form-label req"></label>
+            <input asp-for="TaxPercentage" type="number" min="0" step="0.01" class="form-control" />
+            <span asp-validation-for="TaxPercentage" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6"><div class="form-check form-switch mt-md-4 pt-md-2"><input asp-for="IsInclusive" class="form-check-input" role="switch" /><label asp-for="IsInclusive" class="form-check-label"></label></div></div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mt-md-4 pt-md-2">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> @(isNew ? "Save" : "Update")</button>
+                <a asp-action="Index" class="btn btn-light">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

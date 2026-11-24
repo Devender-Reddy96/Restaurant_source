@@ -1,0 +1,59 @@
+@model UserFormViewModel
+@{
+    var isNew = Model.UserId == 0;
+    ViewData["Title"] = isNew ? "Add User" : "Edit User";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-person-badge"></i> @(isNew ? "Add" : "Edit") User</h1>
+        <p class="page-sub">Roles: Admin (everything), Manager (all masters), Cashier / Waiter / Chef (for the upcoming POS screens).</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to list</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.UserId.ToString())" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="UserId" />
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="UserName" class="form-label req"></label>
+                    <input asp-for="UserName" class="form-control" maxlength="50" autocomplete="off" />
+                    <span asp-validation-for="UserName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="FullName" class="form-label req"></label>
+                    <input asp-for="FullName" class="form-control" maxlength="100" />
+                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="RoleId" class="form-label req"></label>
+                    <select asp-for="RoleId" asp-items="(SelectList)ViewBag.RoleList" class="form-select"><option value="">-- Select --</option></select>
+                    <span asp-validation-for="RoleId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="BranchId" class="form-label"></label>
+                    <select asp-for="BranchId" asp-items="(SelectList)ViewBag.BranchList" class="form-select"><option value="">-- All branches --</option></select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Password" class="form-label @(isNew ? "req" : "")"></label>
+                    <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                    @if (!isNew) { <div class="form-text">Leave blank to keep the current password.</div> }
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mt-md-4 pt-md-2">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> @(isNew ? "Save" : "Update")</button>
+                <a asp-action="Index" class="btn btn-light">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

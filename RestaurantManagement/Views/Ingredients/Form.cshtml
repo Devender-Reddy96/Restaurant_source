@@ -1,0 +1,54 @@
+@model Ingredient
+@{
+    var isNew = Model.IngredientId == 0;
+    ViewData["Title"] = (isNew ? "Add " : "Edit ") + "Ingredient";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-basket"></i> @(isNew ? "Add" : "Edit") Ingredient</h1>
+        <p class="page-sub">Raw materials used in recipes, with reorder level and cost.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to list</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.IngredientId.ToString())" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="IngredientId" />
+            <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="IngredientName" class="form-label req"></label>
+            <input asp-for="IngredientName" type="text" class="form-control" maxlength="100" />
+            <span asp-validation-for="IngredientName" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UnitId" class="form-label req"></label>
+            <select asp-for="UnitId" asp-items="(SelectList)ViewBag.UnitIdList" class="form-select"><option value="">-- Select --</option></select>
+            <span asp-validation-for="UnitId" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="ReorderLevel" class="form-label req"></label>
+            <input asp-for="ReorderLevel" type="number" min="0" step="0.01" class="form-control" />
+            <span asp-validation-for="ReorderLevel" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CostPerUnit" class="form-label req"></label>
+            <input asp-for="CostPerUnit" type="number" min="0" step="0.01" class="form-control" />
+            <span asp-validation-for="CostPerUnit" class="text-danger small"></span>
+        </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mt-md-4 pt-md-2">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> @(isNew ? "Save" : "Update")</button>
+                <a asp-action="Index" class="btn btn-light">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

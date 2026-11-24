@@ -1,0 +1,87 @@
+@model AppUser
+@using RestaurantManagement.Services
+@{
+    ViewData["Title"] = "Permissions - " + Model.UserName;
+    var perms = (Dictionary<string, UserPermission>)ViewBag.Perms;
+    var isAdmin = Model.Role?.RoleName == "Admin";
+    bool Chk(string key, Func<UserPermission, bool> f) => perms.TryGetValue(key, out var p) && f(p);
+}
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-shield-lock"></i> Permissions: @Model.FullName <span class="badge badge-soft">@Model.Role?.RoleName</span></h1>
+        <p class="page-sub">View = open the screen. Add / Edit / Delete = create, change or remove records on that screen.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <form asp-action="ApplyRoleDefaults" asp-route-id="@Model.UserId" method="post" data-confirm="Replace this user's permissions with the @Model.Role?.RoleName role defaults?">
+            <button class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise"></i> Reset to role defaults</button>
+        </form>
+        <a asp-action="Index" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
+
+@if (isAdmin)
+{
+    <div class="alert alert-info">This user is an Administrator and always has full access.</div>
+}
+else
+{
+<form asp-action="Edit" asp-route-id="@Model.UserId" method="post">
+    <div class="card data-card">
+        <div class="card-toolbar flex-wrap">
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="button" class="btn btn-sm btn-outline-primary" data-all="1">Tick everything</button>
+                <button type="button" class="btn btn-sm btn-outline-primary" data-all="view">View only for all</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" data-all="0">Clear all</button>
+            </div>
+            <button class="btn btn-primary"><i class="bi bi-check2-circle"></i> Save permissions</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0 perm-table">
+                <thead><tr><th>Screen / document</th><th class="text-center">View</th><th class="text-center">Add</th><th class="text-center">Edit</th><th class="text-center">Delete</th><th class="text-center">All</th></tr></thead>
+                <tbody>
+                @foreach (var g in ModuleCatalog.All.GroupBy(m => m.Group))
+                {
+                    <tr class="table-light"><td colspan="6" class="fw-bold text-primary small text-uppercase">@g.Key</td></tr>
+                    @foreach (var m in g)
+                    {
+                        <tr>
+                            <td><i class="bi @m.Icon text-muted me-1"></i> @m.Title</td>
+                            <td class="text-center"><input type="checkbox" class="form-check-input r-view" name="@(m.Key).view" value="true" checked="@(Chk(m.Key, p => p.CanView))" /></td>
+                            <td class="text-center"><input type="checkbox" class="form-check-input r-x" name="@(m.Key).add" value="true" checked="@(Chk(m.Key, p => p.CanAdd))" /></td>
+                            <td class="text-center"><input type="checkbox" class="form-check-input r-x" name="@(m.Key).edit" value="true" checked="@(Chk(m.Key, p => p.CanEdit))" /></td>
+                            <td class="text-center"><input type="checkbox" class="form-check-input r-x" name="@(m.Key).delete" value="true" checked="@(Chk(m.Key, p => p.CanDelete))" /></td>
+                            <td class="text-center"><input type="checkbox" class="form-check-input r-row" /></td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>
+}
+
+@section Scripts {
+<script>
+(function () {
+    var t = document.querySelector('.perm-table'); if (!t) return;
+    function sync(tr) { var c = tr.querySelectorAll('.r-view,.r-x'); var r = tr.querySelector('.r-row'); if (r) r.checked = Array.prototype.every.call(c, function (x) { return x.checked; }); }
+    t.querySelectorAll('tbody tr').forEach(sync);
+    t.addEventListener('change', function (e) {
+        var tr = e.target.closest('tr');
+        if (e.target.classList.contains('r-row')) tr.querySelectorAll('.r-view,.r-x').forEach(function (x) { x.checked = e.target.checked; });
+        if (e.target.classList.contains('r-x') && e.target.checked) tr.querySelector('.r-view').checked = true;
+        if (e.target.classList.contains('r-view') && !e.target.checked) tr.querySelectorAll('.r-x').forEach(function (x) { x.checked = false; });
+        sync(tr);
+    });
+    document.querySelectorAll('[data-all]').forEach(function (b) {
+        b.addEventListener('click', function () {
+            var v = b.dataset.all;
+            t.querySelectorAll('.r-view').forEach(function (x) { x.checked = v !== '0'; });
+            t.querySelectorAll('.r-x').forEach(function (x) { x.checked = v === '1'; });
+            t.querySelectorAll('tbody tr').forEach(sync);
+        });
+    });
+})();
+</script>
+}

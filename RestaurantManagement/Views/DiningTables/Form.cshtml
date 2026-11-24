@@ -1,0 +1,54 @@
+@model DiningTable
+@{
+    var isNew = Model.DiningTableId == 0;
+    ViewData["Title"] = (isNew ? "Add " : "Edit ") + "Table";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-grid-3x3-gap"></i> @(isNew ? "Add" : "Edit") Table</h1>
+        <p class="page-sub">Add and manage dining tables with seating capacity and live status.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to list</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.DiningTableId.ToString())" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="DiningTableId" />
+            <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="FloorId" class="form-label req"></label>
+            <select asp-for="FloorId" asp-items="(SelectList)ViewBag.FloorIdList" class="form-select"><option value="">-- Select --</option></select>
+            <span asp-validation-for="FloorId" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="TableNumber" class="form-label req"></label>
+            <input asp-for="TableNumber" type="text" class="form-control" maxlength="20" />
+            <span asp-validation-for="TableNumber" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Capacity" class="form-label req"></label>
+            <input asp-for="Capacity" type="number" min="0" class="form-control" />
+            <span asp-validation-for="Capacity" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Status" class="form-label req"></label>
+            <select asp-for="Status" class="form-select"><option>Available</option><option>Occupied</option><option>Reserved</option><option>Cleaning</option></select>
+            <span asp-validation-for="Status" class="text-danger small"></span>
+        </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mt-md-4 pt-md-2">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> @(isNew ? "Save" : "Update")</button>
+                <a asp-action="Index" class="btn btn-light">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

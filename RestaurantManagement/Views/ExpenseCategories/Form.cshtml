@@ -1,0 +1,44 @@
+@model ExpenseCategory
+@{
+    var isNew = Model.ExpenseCategoryId == 0;
+    ViewData["Title"] = (isNew ? "Add " : "Edit ") + "Expense Category";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-wallet2"></i> @(isNew ? "Add" : "Edit") Expense Category</h1>
+        <p class="page-sub">Groups for daily expenses (Rent, Electricity, Gas, Salaries...).</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to list</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.ExpenseCategoryId.ToString())" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="ExpenseCategoryId" />
+            <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="ExpenseCategoryName" class="form-label req"></label>
+            <input asp-for="ExpenseCategoryName" type="text" class="form-control" maxlength="100" />
+            <span asp-validation-for="ExpenseCategoryName" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Description" class="form-label"></label>
+            <input asp-for="Description" type="text" class="form-control" maxlength="200" />
+            <span asp-validation-for="Description" class="text-danger small"></span>
+        </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mt-md-4 pt-md-2">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> @(isNew ? "Save" : "Update")</button>
+                <a asp-action="Index" class="btn btn-light">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

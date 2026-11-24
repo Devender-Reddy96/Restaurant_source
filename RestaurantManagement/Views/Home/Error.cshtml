@@ -1,0 +1,9 @@
+@{
+    ViewData["Title"] = "Error";
+}
+<div class="empty-state py-5">
+    <i class="bi bi-bug"></i>
+    <h2 class="h4 mt-2">Something went wrong</h2>
+    <p class="text-muted">Please check that the database is running and the connection string in appsettings.json is correct.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to dashboard</a>
+</div>

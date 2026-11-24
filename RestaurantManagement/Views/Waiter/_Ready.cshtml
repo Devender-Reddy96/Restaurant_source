@@ -1,0 +1,38 @@
+@model ReadyBoardViewModel
+@{
+    var ids = string.Join(",", Model.Orders.SelectMany(o => o.Items).Select(i => i.OrderItemId));
+}
+<div data-ids="@ids"></div>
+<div class="row g-3">
+@foreach (var o in Model.Orders)
+{
+    var parcel = o.OrderType == "Parcel";
+    <div class="col-md-6 col-xl-4">
+        <div class="ready-card">
+            <div class="kot-head">
+                <div>
+                    <b class="fs-5"><i class="bi @(parcel ? "bi-bag" : "bi-grid-3x3-gap")"></i> @(parcel ? "PARCEL " + o.OrderNo : "Table " + o.DiningTable?.TableNumber)</b>
+                    @if (parcel && !string.IsNullOrEmpty(o.CustomerName)) { <small class="text-muted ms-1">@o.CustomerName</small> }
+                </div>
+                <small class="text-muted">@o.OrderNo</small>
+            </div>
+            @foreach (var i in o.Items)
+            {
+                var waited = i.ReadyOn == null ? 0 : (int)(DateTime.UtcNow - i.ReadyOn.Value).TotalMinutes;
+                <div class="kot-item">
+                    <b class="fs-5">@i.Quantity&times;</b>
+                    <div class="flex-grow-1"><div class="nm">@i.ItemName</div>@if (!string.IsNullOrEmpty(i.AddonNames)) { <div class="small text-primary">+ @i.AddonNames</div> }<small class="text-muted">ready @(waited) min ago</small></div>
+                    <button class="btn btn-sm btn-outline-success" data-post="/Waiter/Served" data-params='{"id":@i.OrderItemId}'>@(parcel ? "Handed over" : "Served")</button>
+                </div>
+            }
+            <div class="p-2 d-grid">
+                <button class="btn btn-success big-btn" data-post="/Waiter/ServedOrder" data-params='{"orderId":@o.OrderId}'><i class="bi bi-check2-all"></i> @(parcel ? "All handed over" : "All served")</button>
+            </div>
+        </div>
+    </div>
+}
+</div>
+@if (!Model.Orders.Any())
+{
+    <div class="card"><div class="card-body empty-state"><i class="bi bi-cup-hot"></i><br />Nothing waiting to be served.</div></div>
+}

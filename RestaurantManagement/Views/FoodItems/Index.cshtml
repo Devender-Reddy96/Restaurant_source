@@ -1,0 +1,57 @@
+@model IEnumerable<FoodItem>
+@{
+    ViewData["Title"] = "Food Items";
+    var i = 0;
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-egg-fried"></i> Food Items</h1>
+        <p class="page-sub">Your menu: add dishes with price, tax, category, photo and availability.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Food Item</a>
+</div>
+
+<div class="card data-card">
+    <div class="card-toolbar">
+        <div class="search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control search-box" data-table="#dataTable" placeholder="Search..." />
+        </div>
+        <span class="record-count">@(Model.Count()) record(s)</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="dataTable">
+            <thead>
+                <tr><th style="width:50px">#</th><th></th><th>Item Code</th><th>Food Name</th><th>Category</th><th>Food Type</th><th>Price</th><th>Tax</th><th>Available for Sale</th><th>Status</th><th class="text-end" style="width:120px">Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var x in Model)
+                {
+                    <tr>
+                    <td class="text-muted">@(++i)</td>
+                    <td>@if (!string.IsNullOrEmpty(x.ImagePath)) { <img src="@x.ImagePath" class="thumb" alt="" /> } else { <span class="thumb thumb-empty"><i class="bi bi-image"></i></span> }</td>
+                    <td>@(x.ItemCode)</td>
+                    <td class="fw-semibold">@(x.FoodName)</td>
+                    <td>@(x.Category?.CategoryName)</td>
+                    <td><span class="badge badge-soft b-@(x.FoodType.ToLowerInvariant().Replace(' ', '-'))">@(x.FoodType)</span></td>
+                    <td>@(x.Price.ToString("N2"))</td>
+                    <td>@(x.Tax?.TaxName)</td>
+                    <td><span class="badge @(x.IsAvailable ? "b-yes" : "b-no")">@(x.IsAvailable ? "Yes" : "No")</span></td>
+                    <td><span class="badge @(x.IsActive ? "b-yes" : "b-no")">@(x.IsActive ? "Active" : "Inactive")</span></td>
+                    <td class="text-end text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@x.FoodItemId" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                        <form asp-action="Delete" asp-route-id="@x.FoodItemId" method="post" class="d-inline" data-confirm="Delete this food item?">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="11" class="empty-state"><i class="bi bi-inbox"></i><br />No food items added yet. Click <strong>Add Food Item</strong> to create the first one.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

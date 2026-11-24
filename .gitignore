@@ -1,0 +1,6 @@
+bin/
+obj/
+.vs/
+*.user
+RestaurantManagement/wwwroot/uploads/*
+!RestaurantManagement/wwwroot/uploads/.gitkeep

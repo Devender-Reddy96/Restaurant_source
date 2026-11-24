@@ -1,0 +1,87 @@
+@model FoodItem
+@{
+    var isNew = Model.FoodItemId == 0;
+    ViewData["Title"] = (isNew ? "Add " : "Edit ") + "Food Item";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-egg-fried"></i> @(isNew ? "Add" : "Edit") Food Item</h1>
+        <p class="page-sub">Your menu: add dishes with price, tax, category, photo and availability.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to list</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.FoodItemId.ToString())" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="FoodItemId" />
+            <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Photo</label>
+            <input type="hidden" asp-for="ImagePath" />
+            <input type="file" name="imageFile" accept="image/*" class="form-control" />
+            @if (!string.IsNullOrEmpty(Model.ImagePath)) { <img src="@Model.ImagePath" class="mt-2 rounded border" style="height:80px" alt="" /> }
+            <div class="form-text">JPG, PNG or WEBP, up to 2 MB.</div>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="ItemCode" class="form-label"></label>
+            <input asp-for="ItemCode" type="text" class="form-control" maxlength="20" />
+            <span asp-validation-for="ItemCode" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="FoodName" class="form-label req"></label>
+            <input asp-for="FoodName" type="text" class="form-control" maxlength="150" />
+            <span asp-validation-for="FoodName" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CategoryId" class="form-label req"></label>
+            <select asp-for="CategoryId" asp-items="(SelectList)ViewBag.CategoryIdList" class="form-select"><option value="">-- Select --</option></select>
+            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="FoodType" class="form-label req"></label>
+            <select asp-for="FoodType" class="form-select"><option>Veg</option><option>Non-Veg</option><option>Egg</option><option>Vegan</option><option>Beverage</option></select>
+            <span asp-validation-for="FoodType" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Price" class="form-label req"></label>
+            <input asp-for="Price" type="number" min="0" step="0.01" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="TaxId" class="form-label"></label>
+            <select asp-for="TaxId" asp-items="(SelectList)ViewBag.TaxIdList" class="form-select"><option value="">-- Select --</option></select>
+            <span asp-validation-for="TaxId" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="KitchenStationId" class="form-label"></label>
+            <select asp-for="KitchenStationId" asp-items="(SelectList)ViewBag.KitchenStationIdList" class="form-select"><option value="">-- Select --</option></select>
+            <span asp-validation-for="KitchenStationId" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="PreparationTime" class="form-label"></label>
+            <input asp-for="PreparationTime" type="number" min="0" class="form-control" />
+            <span asp-validation-for="PreparationTime" class="text-danger small"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6"><div class="form-check form-switch mt-md-4 pt-md-2"><input asp-for="IsAvailable" class="form-check-input" role="switch" /><label asp-for="IsAvailable" class="form-check-label"></label></div></div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mt-md-4 pt-md-2">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> @(isNew ? "Save" : "Update")</button>
+                <a asp-action="Index" class="btn btn-light">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+@model IEnumerable<DiningTable>
+@{
+    ViewData["Title"] = "Tables";
+    var i = 0;
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-grid-3x3-gap"></i> Tables</h1>
+        <p class="page-sub">Add and manage dining tables with seating capacity and live status.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Table</a>
+</div>
+
+<div class="card data-card">
+    <div class="card-toolbar">
+        <div class="search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control search-box" data-table="#dataTable" placeholder="Search..." />
+        </div>
+        <span class="record-count">@(Model.Count()) record(s)</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="dataTable">
+            <thead>
+                <tr><th style="width:50px">#</th><th>Floor / Area</th><th>Table Number</th><th>Seating Capacity</th><th>Status</th><th>Status</th><th class="text-end" style="width:120px">Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var x in Model)
+                {
+                    <tr>
+                    <td class="text-muted">@(++i)</td>
+                    <td>@(x.Floor?.FloorName)</td>
+                    <td class="fw-semibold">@(x.TableNumber)</td>
+                    <td>@(x.Capacity)</td>
+                    <td><span class="badge badge-soft b-@(x.Status.ToLowerInvariant().Replace(' ', '-'))">@(x.Status)</span></td>
+                    <td><span class="badge @(x.IsActive ? "b-yes" : "b-no")">@(x.IsActive ? "Active" : "Inactive")</span></td>
+                    <td class="text-end text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@x.DiningTableId" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                        <form asp-action="Delete" asp-route-id="@x.DiningTableId" method="post" class="d-inline" data-confirm="Delete this table?">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="empty-state"><i class="bi bi-inbox"></i><br />No tables added yet. Click <strong>Add Table</strong> to create the first one.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

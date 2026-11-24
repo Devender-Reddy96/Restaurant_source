@@ -1,0 +1,90 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var maxCat = Model.ItemsByCategory.Count == 0 ? 1 : Model.ItemsByCategory.Max(x => x.Count);
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-speedometer2"></i> Dashboard</h1>
+        <p class="page-sub">Quick overview of your restaurant setup.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a asp-controller="FoodItems" asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Menu Item</a>
+        <a asp-controller="DiningTables" asp-action="Create" class="btn btn-outline-primary"><i class="bi bi-plus-lg"></i> Table</a>
+        <a asp-controller="Employees" asp-action="Create" class="btn btn-outline-primary"><i class="bi bi-plus-lg"></i> Staff</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-xl-2"><a class="stat" asp-controller="Categories" asp-action="Index"><i class="bi bi-tags"></i><b>@Model.Categories</b><span>Categories</span></a></div>
+    <div class="col-6 col-xl-2"><a class="stat" asp-controller="FoodItems" asp-action="Index"><i class="bi bi-egg-fried"></i><b>@Model.FoodItems</b><span>Menu Items</span></a></div>
+    <div class="col-6 col-xl-2"><a class="stat" asp-controller="DiningTables" asp-action="Index"><i class="bi bi-grid-3x3-gap"></i><b>@Model.Tables</b><span>Tables</span></a></div>
+    <div class="col-6 col-xl-2"><a class="stat" asp-controller="Employees" asp-action="Index"><i class="bi bi-people"></i><b>@Model.Staff</b><span>Staff</span></a></div>
+    <div class="col-6 col-xl-2"><a class="stat" asp-controller="Suppliers" asp-action="Index"><i class="bi bi-truck"></i><b>@Model.Suppliers</b><span>Suppliers</span></a></div>
+    <div class="col-6 col-xl-2"><a class="stat" asp-controller="Customers" asp-action="Index"><i class="bi bi-person-heart"></i><b>@Model.Customers</b><span>Customers</span></a></div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card panel">
+            <div class="panel-title">Table status</div>
+            <div class="card-body">
+                @if (Model.TableStatus.Count == 0)
+                {
+                    <p class="text-muted mb-0">No tables yet.</p>
+                }
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var s in Model.TableStatus)
+                    {
+                        <span class="status-pill b-@(s.Name.ToLowerInvariant())"><b>@s.Count</b> @s.Name</span>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="card panel mt-3">
+            <div class="panel-title">Menu items by category</div>
+            <div class="card-body">
+                @if (Model.ItemsByCategory.Count == 0)
+                {
+                    <p class="text-muted mb-0">No menu items yet.</p>
+                }
+                @foreach (var c in Model.ItemsByCategory)
+                {
+                    <div class="bar-row">
+                        <span class="bar-label">@c.Name</span>
+                        <div class="bar-track"><div class="bar-fill" style="width:@((c.Count * 100) / maxCat)%"></div></div>
+                        <span class="bar-count">@c.Count</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card panel">
+            <div class="panel-title">Recently added menu items</div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <tbody>
+                    @foreach (var f in Model.RecentItems)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(f.ImagePath)) { <img src="@f.ImagePath" class="thumb" alt="" /> }
+                                else { <span class="thumb thumb-empty"><i class="bi bi-image"></i></span> }
+                            </td>
+                            <td><span class="fw-semibold">@f.FoodName</span><br /><small class="text-muted">@(f.Category?.CategoryName)</small></td>
+                            <td><span class="badge badge-soft b-@(f.FoodType.ToLowerInvariant().Replace(' ', '-'))">@f.FoodType</span></td>
+                            <td class="text-end fw-semibold">@f.Price.ToString("N2")</td>
+                        </tr>
+                    }
+                    @if (Model.RecentItems.Count == 0)
+                    {
+                        <tr><td class="empty-state">No items yet.</td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+@model IEnumerable<Unit>
+@{
+    ViewData["Title"] = "Units of Measure";
+    var i = 0;
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-rulers"></i> Units of Measure</h1>
+        <p class="page-sub">Measuring units for ingredients (Kilogram, Litre, Piece...).</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Unit</a>
+</div>
+
+<div class="card data-card">
+    <div class="card-toolbar">
+        <div class="search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control search-box" data-table="#dataTable" placeholder="Search..." />
+        </div>
+        <span class="record-count">@(Model.Count()) record(s)</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="dataTable">
+            <thead>
+                <tr><th style="width:50px">#</th><th>Unit Name</th><th>Short Name</th><th>Status</th><th class="text-end" style="width:120px">Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var x in Model)
+                {
+                    <tr>
+                    <td class="text-muted">@(++i)</td>
+                    <td class="fw-semibold">@(x.UnitName)</td>
+                    <td>@(x.ShortName)</td>
+                    <td><span class="badge @(x.IsActive ? "b-yes" : "b-no")">@(x.IsActive ? "Active" : "Inactive")</span></td>
+                    <td class="text-end text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@x.UnitId" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                        <form asp-action="Delete" asp-route-id="@x.UnitId" method="post" class="d-inline" data-confirm="Delete this unit?">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="5" class="empty-state"><i class="bi bi-inbox"></i><br />No units of measure added yet. Click <strong>Add Unit</strong> to create the first one.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+@model Branch
+@{
+    var isNew = Model.BranchId == 0;
+    ViewData["Title"] = (isNew ? "Add " : "Edit ") + "Branch";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-shop"></i> @(isNew ? "Add" : "Edit") Branch</h1>
+        <p class="page-sub">Restaurant outlets / branches.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to list</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.BranchId.ToString())" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="BranchId" />
+            <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="BranchName" class="form-label req"></label>
+            <input asp-for="BranchName" type="text" class="form-control" maxlength="100" />
+            <span asp-validation-for="BranchName" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="BranchCode" class="form-label req"></label>
+            <input asp-for="BranchCode" type="text" class="form-control" maxlength="20" />
+            <span asp-validation-for="BranchCode" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Phone" class="form-label"></label>
+            <input asp-for="Phone" type="text" class="form-control" maxlength="20" />
+            <span asp-validation-for="Phone" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" type="email" class="form-control" maxlength="100" />
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="City" class="form-label"></label>
+            <input asp-for="City" type="text" class="form-control" maxlength="60" />
+            <span asp-validation-for="City" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="State" class="form-label"></label>
+            <input asp-for="State" type="text" class="form-control" maxlength="60" />
+            <span asp-validation-for="State" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Pincode" class="form-label"></label>
+            <input asp-for="Pincode" type="text" class="form-control" maxlength="10" />
+            <span asp-validation-for="Pincode" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="GstNumber" class="form-label"></label>
+            <input asp-for="GstNumber" type="text" class="form-control" maxlength="20" />
+            <span asp-validation-for="GstNumber" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="FssaiNumber" class="form-label"></label>
+            <input asp-for="FssaiNumber" type="text" class="form-control" maxlength="20" />
+            <span asp-validation-for="FssaiNumber" class="text-danger small"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="Address" class="form-label"></label>
+            <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Address" class="text-danger small"></span>
+        </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mt-md-4 pt-md-2">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> @(isNew ? "Save" : "Update")</button>
+                <a asp-action="Index" class="btn btn-light">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

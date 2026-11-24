@@ -1,0 +1,287 @@
+@model OrderScreenViewModel
+@{
+    var parcel = Model.OrderType == "Parcel";
+    ViewData["Title"] = parcel ? "Parcel Order" : "Order - Table " + Model.Table?.TableNumber;
+    ViewData["Fullscreen"] = true;
+    ViewData["HideBottomNav"] = true;
+    var existing = Model.Order?.Items.Where(i => i.Status != "Cancelled").OrderBy(i => i.RoundNo).ThenBy(i => i.OrderItemId).ToList()
+                   ?? new List<OrderItem>();
+}
+@Html.AntiForgeryToken()
+
+<div class="pos-top">
+    <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i><span> Tables</span></a>
+    <div class="pos-title">
+        <i class="bi @(parcel ? "bi-bag" : "bi-grid-3x3-gap")"></i>
+        <span>@(parcel ? "Parcel / Takeaway" : "Table " + Model.Table?.TableNumber)</span>
+        @if (Model.Order != null) { <span class="badge badge-soft">@Model.Order.OrderNo</span> }
+        <small class="text-muted fw-normal d-none d-xl-inline">@(parcel ? "No table needed. The customer collects from the counter." : "Each time you send, the kitchen gets a new round.")</small>
+    </div>
+    @if (Model.Order != null)
+    {
+        <a asp-controller="Billing" asp-action="Bill" asp-route-id="@Model.Order.OrderId" class="btn btn-primary btn-sm ms-auto"><i class="bi bi-receipt"></i><span> Bill &amp; Pay</span></a>
+    }
+</div>
+
+<div class="pos-shell">
+    <section class="pos-menu">
+        <div class="pos-filters">
+            <div class="d-flex gap-2 mb-2 flex-wrap">
+                <div class="search-wrap flex-grow-1"><i class="bi bi-search"></i><input id="menuSearch" class="form-control" placeholder="Search dish... (idli, dosa, biryani)" autocomplete="off" /></div>
+                <div class="btn-group" role="group" id="typeFilter">
+                    <button type="button" class="btn btn-outline-secondary active" data-t="">All</button>
+                    <button type="button" class="btn btn-outline-success" data-t="Veg">Veg</button>
+                    <button type="button" class="btn btn-outline-danger" data-t="Non-Veg">Non-Veg</button>
+                </div>
+            </div>
+            <div class="cat-tabs" id="catTabs"></div>
+        </div>
+        <div class="pos-menu-scroll"><div class="menu-grid" id="menuGrid"></div></div>
+    </section>
+
+    <aside class="pos-cart" id="cartCol">
+        <div class="pos-cart-head">
+            <span><i class="bi bi-cart3"></i> Order</span>
+            <button type="button" class="icon-btn pos-close d-lg-none" id="closeCart" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="pos-cart-body" id="cartBody">
+            <div class="row g-2">
+                <div class="col-6"><label class="form-label">Customer name</label>
+                    <input id="custName" class="form-control form-control-sm" value="@Model.CustomerName" maxlength="100" /></div>
+                <div class="col-6"><label class="form-label">Mobile (UPI link)</label>
+                    <input id="custMobile" class="form-control form-control-sm" value="@Model.CustomerMobile" inputmode="numeric" maxlength="13" placeholder="10-digit" /></div>
+                @if (!parcel)
+                {
+                    <div class="col-4"><label class="form-label">Guests</label>
+                        <input id="guests" type="number" min="1" class="form-control form-control-sm" value="@Model.Guests" /></div>
+                }
+                <div class="col-@(parcel ? "12" : "8")"><label class="form-label">Table bearer</label>
+                    <select id="waiter" class="form-select form-select-sm">
+                        <option value="">-- select --</option>
+                        @foreach (var w in Model.Waiters) { <option value="@w.Id" selected="@(w.Id == Model.WaiterEmployeeId)">@w.Name</option> }
+                    </select></div>
+            </div>
+
+            @if (existing.Any())
+            {
+                <div class="cart-sec-title">Already sent to kitchen</div>
+                @foreach (var i in existing)
+                {
+                    <div class="d-flex justify-content-between align-items-center small border-bottom py-1">
+                        <span>@i.Quantity &times; @i.ItemName <span class="badge b-@i.Status.ToLowerInvariant()">@i.Status</span>
+                            @if (!string.IsNullOrEmpty(i.AddonNames)) { <br /><small class="text-primary">+ @i.AddonNames</small> }</span>
+                        @if (i.Status == "New")
+                        {
+                            <form asp-action="CancelItem" asp-route-id="@i.OrderItemId" method="post" data-confirm="Cancel this item?">
+                                <button class="btn btn-link text-danger p-0" title="Cancel item"><i class="bi bi-x-circle"></i></button>
+                            </form>
+                        }
+                    </div>
+                }
+                <div class="d-flex justify-content-between mt-2 fw-semibold"><span>Running total</span><span>&#8377;@(Model.Order!.GrandTotal.ToString("N2"))</span></div>
+            }
+            <div class="cart-sec-title">New items</div>
+            <div id="cartLines"><p class="text-muted small mb-0">Tap dishes to add them.</p></div>
+        </div>
+        <div class="pos-cart-foot" id="cartFoot">
+            <div class="d-flex justify-content-between small"><span class="text-muted">Sub-total</span><span id="cSub">&#8377;0.00</span></div>
+            <div class="d-flex justify-content-between small"><span class="text-muted">Tax</span><span id="cTax">&#8377;0.00</span></div>
+            <div class="d-flex justify-content-between fw-bold fs-5 pt-1"><span>New items total</span><span id="cTotal">&#8377;0.00</span></div>
+            <div id="msg" class="mt-2"></div>
+            <button id="placeBtn" class="btn btn-primary w-100 big-btn mt-2" disabled><i class="bi bi-send"></i> Send to Kitchen</button>
+        </div>
+    </aside>
+</div>
+<div class="cart-backdrop" id="cartBackdrop"></div>
+
+<div class="mobile-cart-bar" id="mobileBar">
+    <span><i class="bi bi-cart3"></i> <b id="mbCount">0</b> item(s) &middot; <b id="mbTotal">&#8377;0.00</b></span>
+    <button type="button" class="btn btn-light btn-sm fw-semibold" id="openCart">View order <i class="bi bi-chevron-up"></i></button>
+</div>
+
+<div class="modal fade" id="addonModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"><div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-circle"></i> Add-ons for <span id="amName"></span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body" id="amList"></div>
+        <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="amSave">Apply add-ons</button></div>
+    </div></div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    var MENU = @Json.Serialize(Model.Menu);
+    var ADDONS = @Json.Serialize(Model.Addons);
+    var CTX = {
+        orderId: @Json.Serialize(Model.Order?.OrderId),
+        type: @Json.Serialize(Model.OrderType),
+        tableId: @Json.Serialize(Model.Table?.DiningTableId),
+        waitingId: @Json.Serialize(Model.WaitingId)
+    };
+    var cart = {};            // key "foodId|addonIds" -> {item, qty, note, addons:[addon]}
+    var cat = '', type = '', q = '';
+
+    var cats = [];
+    MENU.forEach(function (m) { if (cats.indexOf(m.category) < 0) cats.push(m.category); });
+
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function dot(t) { return '<span class="veg-dot ' + (t === 'Non-Veg' ? 'nonveg' : (t === 'Egg' ? 'egg' : '')) + '"></span>'; }
+
+    function renderTabs() {
+        var h = '<button class="btn btn-sm ' + (cat === '' ? 'btn-primary' : 'btn-outline-primary') + '" data-c="">All</button>';
+        cats.forEach(function (c) { h += '<button class="btn btn-sm ' + (cat === c ? 'btn-primary' : 'btn-outline-primary') + '" data-c="' + esc(c) + '">' + esc(c) + '</button>'; });
+        document.getElementById('catTabs').innerHTML = h;
+    }
+
+    function renderMenu() {
+        var h = '';
+        MENU.forEach(function (m) {
+            if (cat && m.category !== cat) return;
+            if (type && m.foodType !== type) return;
+            if (q && (m.name + ' ' + m.category).toLowerCase().indexOf(q) < 0) return;
+            var pic = m.image ? 'style="background-image:url(\'' + esc(m.image) + '\')"' : '';
+            h += '<div class="menu-card" data-id="' + m.id + '"><span class="qty-badge"></span><div class="pic" ' + pic + '>' + (m.image ? '' : '<i class="bi bi-egg-fried"></i>') + '</div>' +
+                '<div class="meta"><div class="nm">' + dot(m.foodType) + ' ' + esc(m.name) + '</div>' +
+                '<div class="price">' + Pos.money(m.price) + '</div></div></div>';
+        });
+        document.getElementById('menuGrid').innerHTML = h || '<p class="text-muted">No dishes match.</p>';
+        updateBadges();
+    }
+
+    // little quantity bubble on each dish already in the cart
+    function updateBadges() {
+        var qty = {};
+        Object.keys(cart).forEach(function (k) { var c = cart[k]; qty[c.item.id] = (qty[c.item.id] || 0) + c.qty; });
+        document.querySelectorAll('#menuGrid .menu-card').forEach(function (card) {
+            var n = qty[card.dataset.id] || 0, b = card.querySelector('.qty-badge');
+            if (b) { b.textContent = n; b.classList.toggle('on', n > 0); }
+        });
+    }
+
+    function addonsFor(item) {
+        if (!item.addonIds || !item.addonIds.length) return ADDONS;
+        return ADDONS.filter(function (a) { return item.addonIds.indexOf(a.id) >= 0; });
+    }
+    function keyOf(id, addons) { return id + '|' + addons.map(function (a) { return a.id; }).sort(function (x, y) { return x - y; }).join(','); }
+    function addonSum(c) { return c.addons.reduce(function (s, a) { return s + a.price; }, 0); }
+
+    function line(it, qty, extra) {
+        var gross = (it.price + (extra || 0)) * qty, tax, base;
+        if (it.taxInclusive) { tax = gross * it.taxPercent / (100 + it.taxPercent); base = gross - tax; }
+        else { base = gross; tax = gross * it.taxPercent / 100; }
+        return { base: base, tax: tax, total: base + tax };
+    }
+
+    function renderCart() {
+        var ids = Object.keys(cart), h = '', sub = 0, tax = 0, tot = 0, n = 0;
+        ids.forEach(function (k) {
+            var c = cart[k], l = line(c.item, c.qty, addonSum(c));
+            sub += l.base; tax += l.tax; tot += l.total; n += c.qty;
+            var adds = c.addons.length ? '<div class="small text-primary">+ ' + c.addons.map(function (a) { return esc(a.name) + ' (' + Pos.money(a.price) + ')'; }).join(', ') + '</div>' : '';
+            var canAdd = addonsFor(c.item).length > 0;
+            h += '<div class="cart-line"><div class="flex-grow-1 min-w-0"><div class="small fw-semibold">' + dot(c.item.foodType) + ' ' + esc(c.item.name) + '</div>' + adds +
+                (canAdd ? '<button type="button" class="btn btn-link btn-sm p-0 addon-btn" data-k="' + esc(k) + '"><i class="bi bi-plus-circle"></i> ' + (c.addons.length ? 'Change add-ons' : 'Add-ons') + '</button>' : '') +
+                '<input class="form-control form-control-sm mt-1 note" data-k="' + esc(k) + '" placeholder="Note (less spicy...)" value="' + esc(c.note) + '" maxlength="200"></div>' +
+                '<div class="d-flex align-items-center gap-1"><button class="btn btn-outline-secondary qty-btn" data-d="-1" data-k="' + esc(k) + '">&minus;</button>' +
+                '<b>' + c.qty + '</b><button class="btn btn-outline-secondary qty-btn" data-d="1" data-k="' + esc(k) + '">+</button></div>' +
+                '<div style="width:70px" class="text-end small">' + Pos.money(l.total) + '</div></div>';
+        });
+        document.getElementById('cartLines').innerHTML = h || '<p class="text-muted small mb-0">Tap dishes to add them.</p>';
+        document.getElementById('cSub').textContent = Pos.money(sub);
+        document.getElementById('cTax').textContent = Pos.money(tax);
+        document.getElementById('cTotal').textContent = Pos.money(tot);
+        document.getElementById('placeBtn').disabled = ids.length === 0;
+        document.getElementById('mbCount').textContent = n;
+        document.getElementById('mbTotal').textContent = Pos.money(tot);
+        updateBadges();
+    }
+
+    // ---- add-on picker ----
+    var modalEl = document.getElementById('addonModal'), modal = null, editKey = null;
+    function openAddons(k) {
+        editKey = k; var c = cart[k];
+        document.getElementById('amName').textContent = c.item.name;
+        var chosen = c.addons.map(function (a) { return a.id; });
+        document.getElementById('amList').innerHTML = addonsFor(c.item).map(function (a) {
+            return '<label class="d-flex align-items-center gap-2 border rounded p-2 mb-2"><input type="checkbox" class="form-check-input m-0" value="' + a.id + '"' +
+                (chosen.indexOf(a.id) >= 0 ? ' checked' : '') + '><span class="flex-grow-1">' + esc(a.name) + '</span><b>' + Pos.money(a.price) + '</b></label>';
+        }).join('') || '<p class="text-muted mb-0">No add-ons available for this dish.</p>';
+        modal = modal || new bootstrap.Modal(modalEl); modal.show();
+    }
+    document.getElementById('amSave').addEventListener('click', function () {
+        var c = cart[editKey]; if (!c) return;
+        var ids = Array.prototype.map.call(document.querySelectorAll('#amList input:checked'), function (x) { return Number(x.value); });
+        var picked = ADDONS.filter(function (a) { return ids.indexOf(a.id) >= 0; });
+        delete cart[editKey];
+        var nk = keyOf(c.item.id, picked);
+        if (cart[nk]) cart[nk].qty += c.qty; else { c.addons = picked; cart[nk] = c; }
+        modal.hide(); renderCart();
+    });
+
+    document.getElementById('catTabs').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-c]'); if (!b) return; cat = b.dataset.c; renderTabs(); renderMenu();
+    });
+    document.getElementById('typeFilter').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-t]'); if (!b) return; type = b.dataset.t;
+        this.querySelectorAll('.btn').forEach(function (x) { x.classList.toggle('active', x === b); }); renderMenu();
+    });
+    document.getElementById('menuSearch').addEventListener('input', function () { q = this.value.toLowerCase().trim(); renderMenu(); });
+    document.getElementById('menuGrid').addEventListener('click', function (e) {
+        var card = e.target.closest('.menu-card'); if (!card) return;
+        var id = card.dataset.id, item = MENU.filter(function (m) { return String(m.id) === id; })[0];
+        var k = keyOf(item.id, []);
+        if (!cart[k]) cart[k] = { item: item, qty: 0, note: '', addons: [] };
+        cart[k].qty++; renderCart();
+        card.classList.add('added'); setTimeout(function () { card.classList.remove('added'); }, 300);
+    });
+    document.getElementById('cartLines').addEventListener('click', function (e) {
+        var ab = e.target.closest('.addon-btn'); if (ab) { openAddons(ab.dataset.k); return; }
+        var b = e.target.closest('.qty-btn'); if (!b) return;
+        var c = cart[b.dataset.k]; c.qty += Number(b.dataset.d);
+        if (c.qty <= 0) delete cart[b.dataset.k]; renderCart();
+    });
+    document.getElementById('cartLines').addEventListener('input', function (e) {
+        if (e.target.classList.contains('note')) cart[e.target.dataset.k].note = e.target.value;
+    });
+
+    document.getElementById('placeBtn').addEventListener('click', function () {
+        var btn = this, msg = document.getElementById('msg');
+        var guestsEl = document.getElementById('guests');
+        var req = {
+            orderId: CTX.orderId, orderType: CTX.type, diningTableId: CTX.tableId, waitingId: CTX.waitingId,
+            guests: guestsEl ? Number(guestsEl.value) || 1 : 1,
+            customerName: document.getElementById('custName').value,
+            customerMobile: document.getElementById('custMobile').value,
+            waiterEmployeeId: document.getElementById('waiter').value ? Number(document.getElementById('waiter').value) : null,
+            lines: Object.keys(cart).map(function (k) { var c = cart[k]; return { foodItemId: c.item.id, quantity: c.qty, note: c.note, addonIds: c.addons.map(function (a) { return a.id; }) }; })
+        };
+        btn.disabled = true; msg.innerHTML = '';
+        Pos.postJson('/Pos/PlaceOrder', req).then(function (r) {
+            if (!r.ok) { msg.innerHTML = '<div class="alert alert-danger py-2 mb-0">' + esc(r.message) + '</div>'; btn.disabled = false; return; }
+            document.getElementById('cartFoot').style.display = 'none';
+            document.getElementById('cartBody').innerHTML =
+                '<div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> Order <b>' + esc(r.orderNo) + '</b> sent to the kitchen.</div>' +
+                '<a class="btn btn-primary w-100 mb-2" href="/Billing/Bill/' + r.orderId + '"><i class="bi bi-receipt"></i> Bill &amp; Pay</a>' +
+                '<a class="btn btn-outline-secondary w-100 mb-2" href="/Pos/Order?orderId=' + r.orderId + '">Add more items</a>' +
+                '<a class="btn btn-outline-secondary w-100" href="/Pos">Back to tables</a>';
+        }).catch(function () { msg.innerHTML = '<div class="alert alert-danger py-2 mb-0">Could not reach the server.</div>'; btn.disabled = false; });
+    });
+
+    document.getElementById('waiter').addEventListener('change', function () {
+        if (CTX.orderId) Pos.postForm('/Pos/SetWaiter', { id: CTX.orderId, waiterEmployeeId: this.value });
+    });
+
+    // mobile: order panel slides up as a sheet
+    var cartCol = document.getElementById('cartCol'), cartBackdrop = document.getElementById('cartBackdrop');
+    function openCart() { cartCol.classList.add('open'); cartBackdrop.classList.add('show'); }
+    function closeCart() { cartCol.classList.remove('open'); cartBackdrop.classList.remove('show'); }
+    document.getElementById('openCart').addEventListener('click', openCart);
+    document.getElementById('closeCart').addEventListener('click', closeCart);
+    cartBackdrop.addEventListener('click', closeCart);
+
+    renderTabs(); renderMenu(); renderCart();
+})();
+</script>
+}

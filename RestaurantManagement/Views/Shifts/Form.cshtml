@@ -1,0 +1,49 @@
+@model Shift
+@{
+    var isNew = Model.ShiftId == 0;
+    ViewData["Title"] = (isNew ? "Add " : "Edit ") + "Shift";
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-clock"></i> @(isNew ? "Add" : "Edit") Shift</h1>
+        <p class="page-sub">Working shifts for staff scheduling.</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to list</a>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(isNew ? "Create" : "Edit")" asp-route-id="@(isNew ? null : Model.ShiftId.ToString())" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="ShiftId" />
+            <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="ShiftName" class="form-label req"></label>
+            <input asp-for="ShiftName" type="text" class="form-control" maxlength="100" />
+            <span asp-validation-for="ShiftName" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="StartTime" class="form-label req"></label>
+            <input type="time" id="StartTime" name="StartTime" class="form-control" value="@(Model.StartTime.ToString("HH:mm"))" />
+            <span asp-validation-for="StartTime" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="EndTime" class="form-label req"></label>
+            <input type="time" id="EndTime" name="EndTime" class="form-control" value="@(Model.EndTime.ToString("HH:mm"))" />
+            <span asp-validation-for="EndTime" class="text-danger small"></span>
+        </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch mt-md-4 pt-md-2">
+                        <input asp-for="IsActive" class="form-check-input" role="switch" />
+                        <label asp-for="IsActive" class="form-check-label">Active</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> @(isNew ? "Save" : "Update")</button>
+                <a asp-action="Index" class="btn btn-light">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

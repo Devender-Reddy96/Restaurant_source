@@ -1,0 +1,16 @@
+@inject RestaurantManagement.Services.PermissionService Perm
+@{
+    var ctl = (ViewContext.RouteData.Values["controller"] as string) ?? "";
+    var isAdmin = User.IsInRole("Admin");
+    var perms = await Perm.AllAsync();
+    bool V(string key) => isAdmin || (perms.TryGetValue(key, out var p) && p.CanView);
+    string A(string c) => string.Equals(ctl, c, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+}
+<nav class="bottom-nav" aria-label="Quick navigation">
+    <a class="@A("Home")" asp-controller="Home" asp-action="Index"><i class="bi bi-house"></i>Home</a>
+    @if (V("Pos")) { <a class="@A("Pos")" asp-controller="Pos" asp-action="Index"><i class="bi bi-grid-3x3-gap"></i>Tables</a> }
+    @if (V("Kitchen")) { <a class="@A("Kitchen")" asp-controller="Kitchen" asp-action="Index"><i class="bi bi-fire"></i>Kitchen</a> }
+    @if (V("Waiter")) { <a class="@A("Waiter")" asp-controller="Waiter" asp-action="Index"><i class="bi bi-bell"></i>Waiter</a> }
+    @if (V("Billing")) { <a class="@A("Billing")" asp-controller="Billing" asp-action="Index"><i class="bi bi-receipt"></i>Billing</a> }
+    <button type="button" id="moreBtn"><i class="bi bi-list"></i>More</button>
+</nav>

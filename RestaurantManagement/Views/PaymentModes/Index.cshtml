@@ -1,0 +1,52 @@
+@model IEnumerable<PaymentMode>
+@{
+    ViewData["Title"] = "Payment Modes";
+    var i = 0;
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-credit-card"></i> Payment Modes</h1>
+        <p class="page-sub">Cash, UPI, cards and other ways a customer can pay.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Payment Mode</a>
+</div>
+
+<div class="card data-card">
+    <div class="card-toolbar">
+        <div class="search-wrap">
+            <i class="bi bi-search"></i>
+            <input type="text" class="form-control search-box" data-table="#dataTable" placeholder="Search..." />
+        </div>
+        <span class="record-count">@(Model.Count()) record(s)</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="dataTable">
+            <thead>
+                <tr><th style="width:50px">#</th><th>Mode Name</th><th>Mode Type</th><th>Needs Reference No.</th><th>Status</th><th class="text-end" style="width:120px">Actions</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var x in Model)
+                {
+                    <tr>
+                    <td class="text-muted">@(++i)</td>
+                    <td class="fw-semibold">@(x.ModeName)</td>
+                    <td><span class="badge badge-soft b-@(x.ModeType.ToLowerInvariant().Replace(' ', '-'))">@(x.ModeType)</span></td>
+                    <td><span class="badge @(x.RequiresReference ? "b-yes" : "b-no")">@(x.RequiresReference ? "Yes" : "No")</span></td>
+                    <td><span class="badge @(x.IsActive ? "b-yes" : "b-no")">@(x.IsActive ? "Active" : "Inactive")</span></td>
+                    <td class="text-end text-nowrap">
+                        <a asp-action="Edit" asp-route-id="@x.PaymentModeId" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                        <form asp-action="Delete" asp-route-id="@x.PaymentModeId" method="post" class="d-inline" data-confirm="Delete this payment mode?">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="empty-state"><i class="bi bi-inbox"></i><br />No payment modes added yet. Click <strong>Add Payment Mode</strong> to create the first one.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

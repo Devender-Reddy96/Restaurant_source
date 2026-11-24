@@ -1,0 +1,90 @@
+@{
+    var fullName = User.FindFirst("FullName")?.Value ?? User.Identity?.Name ?? "User";
+    var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "";
+    var fullscreen = ViewData["Fullscreen"] != null;
+}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f6b4f" />
+    <title>@ViewData["Title"] - Restaurant Management</title>
+    <script>
+        /* apply saved theme + sidebar state before first paint (no flash) */
+        (function () {
+            try {
+                var t = localStorage.getItem('theme') || 'auto';
+                var dark = t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
+                if (localStorage.getItem('sb') === 'collapsed') document.documentElement.classList.add('sb-collapsed');
+            } catch (e) { }
+        })();
+    </script>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/bootstrap-icons.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+</head>
+<body class="@(fullscreen ? "pos-fs" : "")">
+<div class="app">
+    <aside class="sidebar" id="sidebar">
+        <a class="brand" asp-controller="Home" asp-action="Index">
+            <span class="brand-icon"><i class="bi bi-cup-hot"></i></span>
+            <span>Restaurant<br /><small>Management</small></span>
+        </a>
+        <partial name="_Sidebar" />
+    </aside>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <div class="main">
+        <header class="topbar">
+            <button type="button" class="icon-btn" id="menuToggle" aria-label="Toggle menu" title="Collapse / expand menu"><i class="bi bi-layout-sidebar-inset"></i></button>
+            <span class="topbar-title d-lg-none">@ViewData["Title"]</span>
+
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <div class="dropdown">
+                    <button class="icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Theme" title="Theme"><i class="bi bi-circle-half" id="themeIcon"></i></button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><button type="button" class="dropdown-item" data-theme-set="light"><i class="bi bi-sun"></i> Light</button></li>
+                        <li><button type="button" class="dropdown-item" data-theme-set="dark"><i class="bi bi-moon-stars"></i> Dark</button></li>
+                        <li><button type="button" class="dropdown-item" data-theme-set="auto"><i class="bi bi-circle-half"></i> Same as device</button></li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <button class="user-chip dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="avatar">@(fullName.Substring(0, 1).ToUpperInvariant())</span>
+                        <span class="d-none d-sm-inline">@fullName <small class="text-muted">(@role)</small></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Sign out</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <partial name="_Alerts" />
+            @RenderBody()
+        </main>
+        <footer class="app-footer">Restaurant Management System</footer>
+    </div>
+</div>
+
+@if (ViewData["HideBottomNav"] == null)
+{
+    <partial name="_BottomNav" />
+}
+
+<script src="~/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+<script src="~/js/jquery.min.js" asp-append-version="true"></script>
+<script src="~/js/jquery.validate.min.js" asp-append-version="true"></script>
+<script src="~/js/jquery.validate.unobtrusive.min.js" asp-append-version="true"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/pos.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,431 @@
+﻿item_code,food_name,category,food_type,price_inr,prep_minutes,wikipedia_title
+SI0001,Idli (2 pcs),Tiffin & Breakfast,Veg,40,10,Idli
+SI0002,Mini Idli Sambar,Tiffin & Breakfast,Veg,60,10,Idli
+SI0003,Ghee Podi Idli,Tiffin & Breakfast,Veg,70,12,Idli
+SI0004,Thatte Idli,Tiffin & Breakfast,Veg,60,10,Thatte idli
+SI0005,Rava Idli (2 pcs),Tiffin & Breakfast,Veg,60,12,Rava idli
+SI0006,Kanchipuram Idli,Tiffin & Breakfast,Veg,70,12,Kanchipuram idli
+SI0007,Medu Vada (2 pcs),Tiffin & Breakfast,Veg,50,10,Medu vada
+SI0008,Sambar Vada,Tiffin & Breakfast,Veg,70,10,Medu vada
+SI0009,Rasam Vada,Tiffin & Breakfast,Veg,70,10,Medu vada
+SI0010,Curd Vada,Tiffin & Breakfast,Veg,70,10,Dahi vada
+SI0011,Masala Vada (3 pcs),Tiffin & Breakfast,Veg,40,10,Masala vada
+SI0012,Idli Vada Combo,Tiffin & Breakfast,Veg,70,10,Idli
+SI0013,Upma,Tiffin & Breakfast,Veg,45,10,Upma
+SI0014,Rava Kesari,Tiffin & Breakfast,Veg,45,8,Kesari bath
+SI0015,Khara Bath,Tiffin & Breakfast,Veg,50,10,Upma
+SI0016,Ven Pongal,Tiffin & Breakfast,Veg,55,10,Pongal (dish)
+SI0017,Sakkarai Pongal,Tiffin & Breakfast,Veg,60,10,Pongal (dish)
+SI0018,Poori Masala (2 pcs),Tiffin & Breakfast,Veg,60,12,Poori
+SI0019,Chapati Kurma,Tiffin & Breakfast,Veg,60,12,Chapati
+SI0020,Uttapam Plain,Tiffin & Breakfast,Veg,70,12,Uttapam
+SI0021,Onion Uttapam,Tiffin & Breakfast,Veg,80,12,Uttapam
+SI0022,Tomato Uttapam,Tiffin & Breakfast,Veg,80,12,Uttapam
+SI0023,Podi Uttapam,Tiffin & Breakfast,Veg,80,12,Uttapam
+SI0024,Appam with Veg Stew,Tiffin & Breakfast,Veg,90,15,Appam
+SI0025,Idiyappam with Coconut Milk,Tiffin & Breakfast,Veg,80,15,Idiyappam
+SI0026,Puttu with Kadala Curry,Tiffin & Breakfast,Veg,90,15,Puttu
+SI0027,Pesarattu,Tiffin & Breakfast,Veg,70,12,Pesarattu
+SI0028,Akki Roti,Tiffin & Breakfast,Veg,60,12,Akki roti
+SI0029,Ragi Mudde with Saaru,Tiffin & Breakfast,Veg,80,15,Ragi mudde
+SI0030,Mysore Bonda (4 pcs),Tiffin & Breakfast,Veg,50,10,Bonda
+SI0031,Mirchi Bajji (3 pcs),Tiffin & Breakfast,Veg,40,10,Mirchi bajji
+SI0032,Kuzhi Paniyaram (6 pcs),Tiffin & Breakfast,Veg,60,12,Paniyaram
+SI0033,Bisi Bele Bath,Tiffin & Breakfast,Veg,90,12,Bisi bele bath
+SI0034,Sabudana Khichdi,Tiffin & Breakfast,Veg,70,10,Sabudana khichdi
+SI0035,Plain Dosa,Dosa Varieties,Veg,60,10,Dosa
+SI0036,Masala Dosa,Dosa Varieties,Veg,80,12,Masala dosa
+SI0037,Ghee Roast Dosa,Dosa Varieties,Veg,90,12,Dosa
+SI0038,Mysore Masala Dosa,Dosa Varieties,Veg,100,12,Mysore masala dosa
+SI0039,Rava Dosa,Dosa Varieties,Veg,90,12,Rava dosa
+SI0040,Onion Rava Dosa,Dosa Varieties,Veg,100,12,Rava dosa
+SI0041,Rava Masala Dosa,Dosa Varieties,Veg,110,14,Rava dosa
+SI0042,Set Dosa (3 pcs),Dosa Varieties,Veg,80,10,Set dosa
+SI0043,Neer Dosa (3 pcs),Dosa Varieties,Veg,70,10,Neer dosa
+SI0044,Benne Dosa,Dosa Varieties,Veg,90,12,Benne dose
+SI0045,Paper Dosa,Dosa Varieties,Veg,100,12,Paper dosa
+SI0046,Paneer Dosa,Dosa Varieties,Veg,120,14,Dosa
+SI0047,Cheese Dosa,Dosa Varieties,Veg,110,12,Dosa
+SI0048,Podi Dosa,Dosa Varieties,Veg,80,10,Dosa
+SI0049,Egg Dosa,Dosa Varieties,Egg,90,12,Dosa
+SI0050,Chicken Keema Dosa,Dosa Varieties,Non-Veg,130,15,Dosa
+SI0051,Adai,Dosa Varieties,Veg,80,12,Adai
+SI0052,Adai Avial,Dosa Varieties,Veg,100,14,Adai
+SI0053,Ragi Dosa,Dosa Varieties,Veg,80,12,Ragi
+SI0054,Onion Dosa,Dosa Varieties,Veg,80,10,Dosa
+SI0055,Kal Dosa (2 pcs),Dosa Varieties,Veg,70,10,Kal dosa
+SI0056,Cone Dosa,Dosa Varieties,Veg,90,12,Dosa
+SI0057,Pizza Dosa,Dosa Varieties,Veg,120,14,Dosa
+SI0058,Family Dosa,Dosa Varieties,Veg,220,18,Dosa
+SI0059,Spring Dosa,Dosa Varieties,Veg,110,14,Dosa
+SI0060,Curd Rice,Rice Varieties,Veg,70,5,Curd rice
+SI0061,Lemon Rice,Rice Varieties,Veg,70,8,Lemon rice
+SI0062,Tamarind Rice (Puliyodarai),Rice Varieties,Veg,70,8,Pulihora
+SI0063,Tomato Rice,Rice Varieties,Veg,70,8,Tomato rice
+SI0064,Coconut Rice,Rice Varieties,Veg,75,8,Coconut rice
+SI0065,Vangi Bath,Rice Varieties,Veg,80,10,Vangibath
+SI0066,Sambar Rice,Rice Varieties,Veg,80,8,Sambar rice
+SI0067,Rasam Rice,Rice Varieties,Veg,75,8,Rasam
+SI0068,Ghee Rice,Rice Varieties,Veg,90,10,Ghee rice
+SI0069,Jeera Rice,Rice Varieties,Veg,80,10,Jeera rice
+SI0070,Steamed Rice,Rice Varieties,Veg,40,5,Steamed rice
+SI0071,Kerala Matta Rice,Rice Varieties,Veg,50,5,Matta rice
+SI0072,Gongura Rice,Rice Varieties,Veg,90,10,Gongura
+SI0073,Mango Rice,Rice Varieties,Veg,75,8,Mango rice
+SI0074,Pudina Rice,Rice Varieties,Veg,80,8,
+SI0075,Bagara Rice,Rice Varieties,Veg,120,12,Bagara rice
+SI0076,Kuska (Plain Biryani Rice),Rice Varieties,Veg,90,10,Kuska
+SI0077,Egg Fried Rice,Rice Varieties,Egg,140,12,Fried rice
+SI0078,South Indian Veg Meals,Meals & Thali,Veg,150,10,Meal
+SI0079,Mini Meals,Meals & Thali,Veg,110,10,Meal
+SI0080,Andhra Meals,Meals & Thali,Veg,170,12,Andhra cuisine
+SI0081,Kerala Sadya,Meals & Thali,Veg,250,15,Sadhya
+SI0082,Karnataka Oota (Meals),Meals & Thali,Veg,160,12,Karnataka
+SI0083,Chettinad Meals,Meals & Thali,Veg,200,15,Chettinad cuisine
+SI0084,Banana Leaf Meals,Meals & Thali,Veg,180,12,Meal
+SI0085,Udupi Thali,Meals & Thali,Veg,190,12,Udupi cuisine
+SI0086,Non-Veg Meals (Chicken),Meals & Thali,Non-Veg,230,15,Meal
+SI0087,Mutton Meals,Meals & Thali,Non-Veg,290,18,Meal
+SI0088,Fish Meals,Meals & Thali,Non-Veg,250,15,Meal
+SI0089,Egg Meals,Meals & Thali,Egg,190,12,Meal
+SI0090,Curd Rice Combo,Meals & Thali,Veg,120,8,Curd rice
+SI0091,Kids Meal,Meals & Thali,Veg,120,10,
+SI0092,Hyderabadi Veg Thali,Meals & Thali,Veg,200,12,Thali
+SI0093,Rajasthani Thali,Meals & Thali,Veg,260,15,Thali
+SI0094,Gujarati Thali,Meals & Thali,Veg,250,15,Thali
+SI0095,Bengali Veg Thali,Meals & Thali,Veg,230,15,Thali
+SI0096,Hyderabadi Chicken Dum Biryani,Biryani & Pulao,Non-Veg,260,25,Hyderabadi biryani
+SI0097,Hyderabadi Mutton Biryani,Biryani & Pulao,Non-Veg,340,30,Hyderabadi biryani
+SI0098,Hyderabadi Veg Biryani,Biryani & Pulao,Veg,200,22,Hyderabadi biryani
+SI0099,Hyderabadi Egg Biryani,Biryani & Pulao,Egg,190,22,Hyderabadi biryani
+SI0100,Chicken 65 Biryani,Biryani & Pulao,Non-Veg,280,25,Biryani
+SI0101,Ambur Chicken Biryani,Biryani & Pulao,Non-Veg,260,25,Ambur biryani
+SI0102,Dindigul Thalappakatti Mutton Biryani,Biryani & Pulao,Non-Veg,340,30,Dindigul Thalappakatti
+SI0103,Chettinad Chicken Biryani,Biryani & Pulao,Non-Veg,270,25,Chettinad cuisine
+SI0104,Thalassery Chicken Biryani,Biryani & Pulao,Non-Veg,270,25,Thalassery biryani
+SI0105,Kerala Beef Biryani,Biryani & Pulao,Non-Veg,300,28,Biryani
+SI0106,Donne Biryani (Bangalore),Biryani & Pulao,Non-Veg,250,25,Donne biryani
+SI0107,Awadhi Biryani (Lucknow),Biryani & Pulao,Non-Veg,280,28,Awadhi biryani
+SI0108,Kolkata Chicken Biryani,Biryani & Pulao,Non-Veg,260,25,Kolkata biryani
+SI0109,Prawns Biryani,Biryani & Pulao,Non-Veg,320,28,Biryani
+SI0110,Fish Biryani,Biryani & Pulao,Non-Veg,300,28,Biryani
+SI0111,Mutton Keema Biryani,Biryani & Pulao,Non-Veg,330,28,Biryani
+SI0112,Paneer Biryani,Biryani & Pulao,Veg,230,22,Biryani
+SI0113,Mushroom Biryani,Biryani & Pulao,Veg,210,22,Biryani
+SI0114,Veg Pulao,Biryani & Pulao,Veg,150,15,Pulao
+SI0115,Kashmiri Pulao,Biryani & Pulao,Veg,170,15,Pulao
+SI0116,Jeera Pulao,Biryani & Pulao,Veg,130,12,Pulao
+SI0117,Biryani Family Pack (4 pax),Biryani & Pulao,Non-Veg,760,35,Biryani
+SI0118,Sambar,Veg Curries & Dal,Veg,60,5,Sambar (dish)
+SI0119,Tomato Rasam,Veg Curries & Dal,Veg,50,5,Rasam
+SI0120,Kootu,Veg Curries & Dal,Veg,80,10,Kootu
+SI0121,Avial,Veg Curries & Dal,Veg,110,12,Avial
+SI0122,Beans Poriyal,Veg Curries & Dal,Veg,80,10,Poriyal
+SI0123,Kerala Veg Stew,Veg Curries & Dal,Veg,120,12,Stew
+SI0124,Vegetable Kurma,Veg Curries & Dal,Veg,110,12,Korma
+SI0125,Chettinad Veg Curry,Veg Curries & Dal,Veg,130,14,Chettinad cuisine
+SI0126,Gutti Vankaya Curry,Veg Curries & Dal,Veg,130,15,
+SI0127,Tomato Pappu,Veg Curries & Dal,Veg,100,12,Pappu
+SI0128,Gongura Pappu,Veg Curries & Dal,Veg,110,12,Pappu
+SI0129,Dal Tadka,Veg Curries & Dal,Veg,120,12,Dal
+SI0130,Dal Fry,Veg Curries & Dal,Veg,110,12,Dal
+SI0131,Kerala Parippu Curry,Veg Curries & Dal,Veg,100,10,Parippu
+SI0132,Pulissery,Veg Curries & Dal,Veg,90,10,Pulissery
+SI0133,Mor Kuzhambu,Veg Curries & Dal,Veg,90,10,Mor kuzhambu
+SI0134,Vatha Kuzhambu,Veg Curries & Dal,Veg,100,12,Kuzhambu
+SI0135,Kara Kuzhambu,Veg Curries & Dal,Veg,100,12,Kuzhambu
+SI0136,Mirchi Ka Salan,Veg Curries & Dal,Veg,120,12,Mirchi ka salan
+SI0137,Bagara Baingan,Veg Curries & Dal,Veg,150,14,Bagara baingan
+SI0138,Paneer Butter Masala,Veg Curries & Dal,Veg,190,14,Paneer tikka masala
+SI0139,Kadai Paneer,Veg Curries & Dal,Veg,190,14,Karahi
+SI0140,Palak Paneer,Veg Curries & Dal,Veg,180,14,Palak paneer
+SI0141,Paneer Tikka Masala,Veg Curries & Dal,Veg,200,15,Paneer tikka masala
+SI0142,Malai Kofta,Veg Curries & Dal,Veg,190,15,Malai kofta
+SI0143,Mixed Veg Curry,Veg Curries & Dal,Veg,150,12,Mixed vegetable curry
+SI0144,Aloo Gobi,Veg Curries & Dal,Veg,140,12,Aloo gobi
+SI0145,Chana Masala,Veg Curries & Dal,Veg,140,12,Chana masala
+SI0146,Rajma Masala,Veg Curries & Dal,Veg,140,14,Rajma
+SI0147,Baingan Bharta,Veg Curries & Dal,Veg,150,14,Baingan bharta
+SI0148,Bhindi Masala,Veg Curries & Dal,Veg,150,12,Bhindi masala
+SI0149,Mushroom Masala,Veg Curries & Dal,Veg,170,14,Mushroom
+SI0150,Dal Makhani,Veg Curries & Dal,Veg,170,15,Dal makhani
+SI0151,Methi Malai Matar,Veg Curries & Dal,Veg,180,14,Methi malai matar
+SI0152,Chicken Chettinad,Non-Veg Curries,Non-Veg,240,18,Chettinad chicken
+SI0153,Andhra Chicken Curry,Non-Veg Curries,Non-Veg,230,18,Andhra cuisine
+SI0154,Kerala Chicken Curry (Nadan),Non-Veg Curries,Non-Veg,230,18,Kerala cuisine
+SI0155,Kerala Chicken Roast,Non-Veg Curries,Non-Veg,250,20,Kerala cuisine
+SI0156,Chicken Ghee Roast (Mangalorean),Non-Veg Curries,Non-Veg,260,18,Chicken ghee roast
+SI0157,Kori Gassi,Non-Veg Curries,Non-Veg,250,18,Kori gassi
+SI0158,Pepper Chicken,Non-Veg Curries,Non-Veg,240,16,Chicken pepper fry
+SI0159,Natu Kodi Pulusu (Country Chicken),Non-Veg Curries,Non-Veg,280,25,Andhra cuisine
+SI0160,Nattu Kozhi Varuval,Non-Veg Curries,Non-Veg,300,25,Chettinad cuisine
+SI0161,Pallipalayam Chicken,Non-Veg Curries,Non-Veg,250,18,
+SI0162,Chicken Butter Masala,Non-Veg Curries,Non-Veg,260,18,Butter chicken
+SI0163,Chicken Tikka Masala,Non-Veg Curries,Non-Veg,270,18,Chicken tikka masala
+SI0164,Kadai Chicken,Non-Veg Curries,Non-Veg,250,16,Karahi
+SI0165,Chicken Korma,Non-Veg Curries,Non-Veg,250,18,Korma
+SI0166,Mutton Chukka,Non-Veg Curries,Non-Veg,330,25,Mutton chukka
+SI0167,Mutton Pepper Fry,Non-Veg Curries,Non-Veg,340,25,Pepper fry
+SI0168,Mutton Rogan Josh,Non-Veg Curries,Non-Veg,340,25,Rogan josh
+SI0169,Mutton Curry (Nadan),Non-Veg Curries,Non-Veg,320,25,Mutton curry
+SI0170,Gongura Mutton,Non-Veg Curries,Non-Veg,350,28,Gongura
+SI0171,Keema Masala,Non-Veg Curries,Non-Veg,290,18,Keema
+SI0172,Mutton Paya,Non-Veg Curries,Non-Veg,260,30,Paya
+SI0173,Haleem,Non-Veg Curries,Non-Veg,250,15,Haleem
+SI0174,Egg Curry,Non-Veg Curries,Egg,140,12,Egg curry
+SI0175,Kerala Egg Roast,Non-Veg Curries,Egg,150,14,Kerala cuisine
+SI0176,Egg Masala,Non-Veg Curries,Egg,140,12,Egg curry
+SI0177,Kerala Beef Fry,Non-Veg Curries,Non-Veg,280,22,Beef fry
+SI0178,Beef Ularthiyathu,Non-Veg Curries,Non-Veg,290,25,Kerala cuisine
+SI0179,Butter Chicken,Non-Veg Curries,Non-Veg,270,18,Butter chicken
+SI0180,Chicken Do Pyaza,Non-Veg Curries,Non-Veg,260,18,Do pyaza
+SI0181,Kerala Fish Curry (Meen Curry),Seafood,Non-Veg,260,18,Fish curry
+SI0182,Fish Fry (Tawa),Seafood,Non-Veg,260,15,Fish fry
+SI0183,Karimeen Pollichathu,Seafood,Non-Veg,480,25,Karimeen pollichathu
+SI0184,Prawn Masala,Seafood,Non-Veg,320,18,Prawn
+SI0185,Prawn Ghee Roast,Seafood,Non-Veg,340,18,Prawn
+SI0186,Chettinad Fish Curry,Seafood,Non-Veg,270,18,Chettinad cuisine
+SI0187,Andhra Fish Pulusu,Seafood,Non-Veg,270,18,Chepala pulusu
+SI0188,Mangalorean Fish Curry,Seafood,Non-Veg,270,18,Mangalorean cuisine
+SI0189,Squid Pepper Fry,Seafood,Non-Veg,300,18,Squid as food
+SI0190,Crab Masala,Seafood,Non-Veg,380,25,Crab
+SI0191,Nethili Fry (Anchovy),Seafood,Non-Veg,220,12,Anchovy
+SI0192,Pomfret Fry,Seafood,Non-Veg,450,18,Pomfret
+SI0193,Fish Moilee,Seafood,Non-Veg,290,18,Fish molee
+SI0194,Prawn Fry,Seafood,Non-Veg,320,15,Prawn
+SI0195,Vanjaram (Seer Fish) Fry,Seafood,Non-Veg,450,18,Scomberomorus
+SI0196,Goan Fish Curry,Seafood,Non-Veg,280,18,Goan cuisine
+SI0197,Gobi 65,Starters - Veg,Veg,160,12,Gobi 65
+SI0198,Paneer 65,Starters - Veg,Veg,190,14,Paneer
+SI0199,Gobi Manchurian,Starters - Veg,Veg,170,12,Gobi Manchurian
+SI0200,Paneer Tikka,Starters - Veg,Veg,210,15,Paneer tikka
+SI0201,Hara Bhara Kebab,Starters - Veg,Veg,180,14,Hara bhara kabab
+SI0202,Veg Cutlet,Starters - Veg,Veg,120,10,Cutlet
+SI0203,Mushroom Pepper Fry,Starters - Veg,Veg,170,12,Mushroom
+SI0204,Baby Corn Fry,Starters - Veg,Veg,170,12,Baby corn
+SI0205,Paneer Pakoda,Starters - Veg,Veg,170,12,Pakora
+SI0206,Onion Pakoda,Starters - Veg,Veg,80,10,Pakora
+SI0207,Mixed Veg Bajji,Starters - Veg,Veg,80,10,Bajji
+SI0208,Aloo 65,Starters - Veg,Veg,150,12,Aloo 65
+SI0209,Crispy Corn,Starters - Veg,Veg,140,10,Corn
+SI0210,Veg Spring Roll,Starters - Veg,Veg,140,12,Spring roll
+SI0211,Veg Samosa (2 pcs),Starters - Veg,Veg,40,8,Samosa
+SI0212,Veg Seekh Kebab,Starters - Veg,Veg,180,14,Seekh kebab
+SI0213,Cauliflower Pepper Fry,Starters - Veg,Veg,150,12,
+SI0214,Kerala Banana Chips,Starters - Veg,Veg,60,2,Banana chips
+SI0215,Murukku,Starters - Veg,Veg,50,2,Murukku
+SI0216,Chilli Paneer (Dry),Starters - Veg,Veg,200,14,Chilli paneer
+SI0217,Chicken 65,Starters - Non-Veg,Non-Veg,220,15,Chicken 65
+SI0218,Chicken Lollipop,Starters - Non-Veg,Non-Veg,240,15,Chicken lollipop
+SI0219,Apollo Fish,Starters - Non-Veg,Non-Veg,280,15,Apollo fish
+SI0220,Chilli Chicken,Starters - Non-Veg,Non-Veg,230,14,Chilli chicken
+SI0221,Chicken Manchurian,Starters - Non-Veg,Non-Veg,230,14,Chicken Manchurian
+SI0222,Pepper Chicken Dry,Starters - Non-Veg,Non-Veg,240,15,Chicken pepper fry
+SI0223,Chicken Tikka,Starters - Non-Veg,Non-Veg,250,18,Chicken tikka
+SI0224,Tandoori Chicken (Half),Starters - Non-Veg,Non-Veg,260,22,Tandoori chicken
+SI0225,Tandoori Chicken (Full),Starters - Non-Veg,Non-Veg,480,28,Tandoori chicken
+SI0226,Chicken Seekh Kebab,Starters - Non-Veg,Non-Veg,260,16,Seekh kebab
+SI0227,Mutton Seekh Kebab,Starters - Non-Veg,Non-Veg,320,18,Seekh kebab
+SI0228,Chicken Majestic,Starters - Non-Veg,Non-Veg,250,15,
+SI0229,Kerala Fried Chicken,Starters - Non-Veg,Non-Veg,240,15,Fried chicken
+SI0230,Mutton Kola Urundai,Starters - Non-Veg,Non-Veg,230,15,Kola urundai
+SI0231,Egg Pepper Fry,Starters - Non-Veg,Egg,160,10,
+SI0232,Chicken Cutlet,Starters - Non-Veg,Non-Veg,160,12,Cutlet
+SI0233,Prawn 65,Starters - Non-Veg,Non-Veg,330,15,Prawn
+SI0234,Fish Fingers,Starters - Non-Veg,Non-Veg,260,14,Fish finger
+SI0235,Chicken Popcorn,Starters - Non-Veg,Non-Veg,200,12,Popcorn chicken
+SI0236,Kerala Parotta (1 pc),Breads & Parotta,Veg,25,8,Parotta
+SI0237,Chilli Parotta,Breads & Parotta,Veg,140,12,Parotta
+SI0238,Veg Kothu Parotta,Breads & Parotta,Veg,120,14,Kothu parotta
+SI0239,Egg Kothu Parotta,Breads & Parotta,Egg,150,14,Kothu parotta
+SI0240,Chicken Kothu Parotta,Breads & Parotta,Non-Veg,180,15,Kothu parotta
+SI0241,Mutton Kothu Parotta,Breads & Parotta,Non-Veg,230,18,Kothu parotta
+SI0242,Veechu Parotta,Breads & Parotta,Veg,40,10,Parotta
+SI0243,Chapati,Breads & Parotta,Veg,25,6,Chapati
+SI0244,Phulka,Breads & Parotta,Veg,20,5,Phulka
+SI0245,Plain Naan,Breads & Parotta,Veg,50,8,Naan
+SI0246,Butter Naan,Breads & Parotta,Veg,60,8,Naan
+SI0247,Garlic Naan,Breads & Parotta,Veg,70,8,Naan
+SI0248,Kulcha,Breads & Parotta,Veg,60,8,Kulcha
+SI0249,Tandoori Roti,Breads & Parotta,Veg,30,6,Roti
+SI0250,Rumali Roti,Breads & Parotta,Veg,40,8,Rumali roti
+SI0251,Lachha Paratha,Breads & Parotta,Veg,50,8,Laccha paratha
+SI0252,Aloo Paratha,Breads & Parotta,Veg,80,10,Aloo paratha
+SI0253,Bhatura (2 pcs),Breads & Parotta,Veg,60,8,Bhatoora
+SI0254,Jolada Rotti,Breads & Parotta,Veg,50,8,Jolada rotti
+SI0255,Palappam,Breads & Parotta,Veg,30,8,Appam
+SI0256,Ragi Roti,Breads & Parotta,Veg,50,8,Ragi
+SI0257,Egg Parotta,Breads & Parotta,Egg,60,10,Parotta
+SI0258,Veg Fried Rice,Indo-Chinese,Veg,130,12,Fried rice
+SI0259,Schezwan Fried Rice,Indo-Chinese,Veg,150,12,Fried rice
+SI0260,Chicken Fried Rice,Indo-Chinese,Non-Veg,170,12,Fried rice
+SI0261,Veg Noodles,Indo-Chinese,Veg,130,12,Chow mein
+SI0262,Hakka Noodles (Veg),Indo-Chinese,Veg,140,12,Hakka noodles
+SI0263,Chicken Noodles,Indo-Chinese,Non-Veg,170,12,Chow mein
+SI0264,Schezwan Noodles,Indo-Chinese,Veg,160,12,Chow mein
+SI0265,Veg Manchurian (Gravy),Indo-Chinese,Veg,160,14,Manchurian (dish)
+SI0266,Chilli Gobi,Indo-Chinese,Veg,160,12,Gobi Manchurian
+SI0267,American Chop Suey,Indo-Chinese,Veg,180,14,American chop suey
+SI0268,Veg Manchow Soup,Indo-Chinese,Veg,90,8,Manchow soup
+SI0269,Hot and Sour Soup,Indo-Chinese,Veg,90,8,Hot and sour soup
+SI0270,Sweet Corn Soup,Indo-Chinese,Veg,90,8,Corn soup
+SI0271,Chicken Manchow Soup,Indo-Chinese,Non-Veg,110,10,Manchow soup
+SI0272,Triple Schezwan Rice,Indo-Chinese,Non-Veg,200,15,Fried rice
+SI0273,Chicken Schezwan Noodles,Indo-Chinese,Non-Veg,180,12,Chow mein
+SI0274,Egg Noodles,Indo-Chinese,Egg,150,12,Chow mein
+SI0275,Chilli Chicken Gravy,Indo-Chinese,Non-Veg,240,14,Chilli chicken
+SI0276,Pani Puri (6 pcs),Chaats & Snacks,Veg,50,5,Pani puri
+SI0277,Sev Puri,Chaats & Snacks,Veg,60,5,Sev puri
+SI0278,Bhel Puri,Chaats & Snacks,Veg,60,5,Bhelpuri
+SI0279,Dahi Puri,Chaats & Snacks,Veg,70,5,Dahi puri
+SI0280,Masala Puri,Chaats & Snacks,Veg,60,6,Masala puri
+SI0281,Samosa Chaat,Chaats & Snacks,Veg,70,6,Samosa
+SI0282,Pav Bhaji,Chaats & Snacks,Veg,110,12,Pav bhaji
+SI0283,Vada Pav,Chaats & Snacks,Veg,40,6,Vada pav
+SI0284,Dabeli,Chaats & Snacks,Veg,50,6,Dabeli
+SI0285,Kachori,Chaats & Snacks,Veg,40,6,Kachori
+SI0286,Aloo Tikki Chaat,Chaats & Snacks,Veg,80,8,Aloo tikki
+SI0287,Papdi Chaat,Chaats & Snacks,Veg,70,6,Papri chaat
+SI0288,Dhokla,Chaats & Snacks,Veg,70,6,Dhokla
+SI0289,Khandvi,Chaats & Snacks,Veg,70,6,Khandvi
+SI0290,Chana Sundal,Chaats & Snacks,Veg,40,5,Sundal
+SI0291,Pazham Pori (Banana Fry),Chaats & Snacks,Veg,40,8,Pazham pori
+SI0292,Unniyappam,Chaats & Snacks,Veg,50,8,Unni appam
+SI0293,Ela Ada,Chaats & Snacks,Veg,50,8,Ela ada
+SI0294,Punugulu,Chaats & Snacks,Veg,60,8,Punugulu
+SI0295,Egg Puff,Chaats & Snacks,Egg,30,2,Puff pastry
+SI0296,Veg Puff,Chaats & Snacks,Veg,25,2,Puff pastry
+SI0297,Chicken Puff,Chaats & Snacks,Non-Veg,40,2,Puff pastry
+SI0298,South Indian Mixture,Chaats & Snacks,Veg,40,2,Mixture (snack)
+SI0299,Misal Pav,Chaats & Snacks,Veg,90,10,Misal pav
+SI0300,Poha,Chaats & Snacks,Veg,50,8,Poha (food)
+SI0301,Samosa (Single),Chaats & Snacks,Veg,20,5,Samosa
+SI0302,Corn Chaat,Chaats & Snacks,Veg,60,6,
+SI0303,Bonda Soup,Chaats & Snacks,Veg,60,8,
+SI0304,Pepper Rasam,"Soups, Rasam & Sides",Veg,55,5,Rasam
+SI0305,Lemon Rasam,"Soups, Rasam & Sides",Veg,50,5,Rasam
+SI0306,Mutton Soup (Paya),"Soups, Rasam & Sides",Non-Veg,140,10,Paya
+SI0307,Chicken Soup,"Soups, Rasam & Sides",Non-Veg,100,8,Chicken soup
+SI0308,Nattu Kozhi Soup,"Soups, Rasam & Sides",Non-Veg,120,10,
+SI0309,Veg Clear Soup,"Soups, Rasam & Sides",Veg,80,8,
+SI0310,Curd (Bowl),"Soups, Rasam & Sides",Veg,30,2,Curd
+SI0311,Boondi Raita,"Soups, Rasam & Sides",Veg,50,3,Raita
+SI0312,Onion Raita,"Soups, Rasam & Sides",Veg,50,3,Raita
+SI0313,Papad (Roasted),"Soups, Rasam & Sides",Veg,20,2,Papadum
+SI0314,Pickle (Mango/Gongura),"Soups, Rasam & Sides",Veg,20,1,Indian pickle
+SI0315,Green Salad,"Soups, Rasam & Sides",Veg,60,4,
+SI0316,Onion Salad,"Soups, Rasam & Sides",Veg,30,2,
+SI0317,Kachumber Salad,"Soups, Rasam & Sides",Veg,60,4,Kachumber
+SI0318,Extra Coconut Chutney,"Soups, Rasam & Sides",Veg,20,1,Chutney
+SI0319,Extra Sambar,"Soups, Rasam & Sides",Veg,30,2,Sambar (dish)
+SI0320,Gunpowder (Podi) with Gingelly Oil,"Soups, Rasam & Sides",Veg,20,1,Gunpowder (spice mix)
+SI0321,Kerala Pappadam,"Soups, Rasam & Sides",Veg,20,2,Papadum
+SI0322,Gulab Jamun (2 pcs),Desserts & Sweets,Veg,60,3,Gulab jamun
+SI0323,Rasmalai (2 pcs),Desserts & Sweets,Veg,80,3,Ras malai
+SI0324,Mysore Pak,Desserts & Sweets,Veg,70,2,Mysore pak
+SI0325,Semiya Payasam,Desserts & Sweets,Veg,70,4,Payasam
+SI0326,Palada Payasam,Desserts & Sweets,Veg,80,4,Ada pradhaman
+SI0327,Double Ka Meetha,Desserts & Sweets,Veg,80,5,Double ka meetha
+SI0328,Qubani Ka Meetha,Desserts & Sweets,Veg,90,5,Qubani ka meetha
+SI0329,Jalebi,Desserts & Sweets,Veg,60,5,Jalebi
+SI0330,Badam Halwa,Desserts & Sweets,Veg,90,5,Halva
+SI0331,Carrot Halwa (Gajar Halwa),Desserts & Sweets,Veg,90,5,Gajar ka halwa
+SI0332,Ada Pradhaman,Desserts & Sweets,Veg,90,5,Ada pradhaman
+SI0333,Obbattu (Holige),Desserts & Sweets,Veg,60,5,Puran poli
+SI0334,Kozhukattai (2 pcs),Desserts & Sweets,Veg,50,5,Kozhukkattai
+SI0335,Rava Laddu,Desserts & Sweets,Veg,40,2,Laddu
+SI0336,Boondi Laddu,Desserts & Sweets,Veg,40,2,Boondi laddu
+SI0337,Tirunelveli Halwa,Desserts & Sweets,Veg,80,2,Tirunelveli halwa
+SI0338,Ice Cream (Scoop),Desserts & Sweets,Veg,70,2,Ice cream
+SI0339,Kulfi,Desserts & Sweets,Veg,80,2,Kulfi
+SI0340,Falooda,Desserts & Sweets,Veg,140,6,Falooda
+SI0341,Fruit Salad with Ice Cream,Desserts & Sweets,Veg,120,6,Fruit salad
+SI0342,Sheer Khurma,Desserts & Sweets,Veg,90,5,Sheer khurma
+SI0343,Kheer,Desserts & Sweets,Veg,70,4,Kheer
+SI0344,Rasgulla (2 pcs),Desserts & Sweets,Veg,60,2,Rasgulla
+SI0345,Hot Gulab Jamun with Ice Cream,Desserts & Sweets,Veg,110,5,
+SI0346,Bebinca,Desserts & Sweets,Veg,90,3,Bebinca
+SI0347,Sandesh,Desserts & Sweets,Veg,60,2,Sandesh (confectionery)
+SI0348,Coconut Burfi,Desserts & Sweets,Veg,40,2,Barfi
+SI0349,Payasam (Pal),Desserts & Sweets,Veg,70,4,Payasam
+SI0350,Filter Coffee,Hot Beverages,Beverage,30,4,Filter coffee
+SI0351,Tea (Chai),Hot Beverages,Beverage,20,4,Masala chai
+SI0352,Masala Tea,Hot Beverages,Beverage,25,4,Masala chai
+SI0353,Ginger Tea,Hot Beverages,Beverage,25,4,Masala chai
+SI0354,Lemon Tea,Hot Beverages,Beverage,25,4,Tea
+SI0355,Black Coffee,Hot Beverages,Beverage,30,3,Black coffee
+SI0356,Instant Coffee,Hot Beverages,Beverage,30,3,Instant coffee
+SI0357,Hot Badam Milk,Hot Beverages,Beverage,50,4,Badam milk
+SI0358,Horlicks,Hot Beverages,Beverage,40,3,Horlicks
+SI0359,Boost,Hot Beverages,Beverage,40,3,Boost (drink)
+SI0360,Hot Milk,Hot Beverages,Beverage,30,3,Milk
+SI0361,Green Tea,Hot Beverages,Beverage,30,3,Green tea
+SI0362,Sukku Malli Coffee,Hot Beverages,Beverage,35,4,Sukku malli coffee
+SI0363,Irani Chai,Hot Beverages,Beverage,30,4,Irani chai
+SI0364,Kashayam (Herbal Drink),Hot Beverages,Beverage,40,5,Kashayam
+SI0365,Buttermilk (Majjiga),Cold Beverages & Juices,Beverage,30,2,Buttermilk
+SI0366,Masala Chaas,Cold Beverages & Juices,Beverage,35,2,Chaas
+SI0367,Sweet Lassi,Cold Beverages & Juices,Beverage,60,3,Lassi
+SI0368,Mango Lassi,Cold Beverages & Juices,Beverage,80,3,Lassi
+SI0369,Rose Milk,Cold Beverages & Juices,Beverage,50,3,Rose milk
+SI0370,Cold Badam Milk,Cold Beverages & Juices,Beverage,60,3,Badam milk
+SI0371,Nannari Sarbath,Cold Beverages & Juices,Beverage,40,3,Nannari
+SI0372,Jigarthanda,Cold Beverages & Juices,Beverage,90,5,Jigarthanda
+SI0373,Fresh Lime Soda,Cold Beverages & Juices,Beverage,50,3,Lime soda
+SI0374,Fresh Lime Water,Cold Beverages & Juices,Beverage,40,3,Limeade
+SI0375,Tender Coconut Water,Cold Beverages & Juices,Beverage,50,2,Coconut water
+SI0376,Sugarcane Juice,Cold Beverages & Juices,Beverage,40,3,Sugarcane juice
+SI0377,Watermelon Juice,Cold Beverages & Juices,Beverage,60,4,Watermelon
+SI0378,Orange Juice,Cold Beverages & Juices,Beverage,80,4,Orange juice
+SI0379,Pineapple Juice,Cold Beverages & Juices,Beverage,70,4,Pineapple
+SI0380,Mosambi Juice,Cold Beverages & Juices,Beverage,70,4,Sweet lime
+SI0381,Mango Juice,Cold Beverages & Juices,Beverage,80,4,Mango
+SI0382,Grape Juice,Cold Beverages & Juices,Beverage,70,4,Grape juice
+SI0383,Pomegranate Juice,Cold Beverages & Juices,Beverage,100,4,Pomegranate juice
+SI0384,Muskmelon Juice,Cold Beverages & Juices,Beverage,70,4,Cantaloupe
+SI0385,Mixed Fruit Juice,Cold Beverages & Juices,Beverage,90,5,Juice
+SI0386,Banana Milkshake,Cold Beverages & Juices,Beverage,80,4,Milkshake
+SI0387,Chikoo Milkshake,Cold Beverages & Juices,Beverage,90,4,Milkshake
+SI0388,Chocolate Milkshake,Cold Beverages & Juices,Beverage,100,4,Milkshake
+SI0389,Cold Coffee,Cold Beverages & Juices,Beverage,90,4,Iced coffee
+SI0390,Thandai,Cold Beverages & Juices,Beverage,80,4,Thandai
+SI0391,Soft Drink (300 ml),Cold Beverages & Juices,Beverage,30,1,Soft drink
+SI0392,Packaged Water (1 L),Cold Beverages & Juices,Beverage,20,1,Bottled water
+SI0393,Soda,Cold Beverages & Juices,Beverage,25,1,Soda
+SI0394,Panakam,Cold Beverages & Juices,Beverage,40,3,Panakam
+SI0395,Ragi Malt,Cold Beverages & Juices,Beverage,40,4,Ragi malt
+SI0396,Kokum Sherbet,Cold Beverages & Juices,Beverage,50,3,Kokum
+SI0397,Neer Mor (Spiced),Cold Beverages & Juices,Beverage,30,2,Buttermilk
+SI0398,Sarson da Saag with Makki Roti,Regional Favourites (Pan-India),Veg,180,15,Sarson da saag
+SI0399,Amritsari Kulcha,Regional Favourites (Pan-India),Veg,120,12,Kulcha
+SI0400,Chole Bhature,Regional Favourites (Pan-India),Veg,130,12,Chole bhature
+SI0401,Rajma Chawal,Regional Favourites (Pan-India),Veg,130,12,Rajma chawal
+SI0402,Kadhi Pakora,Regional Favourites (Pan-India),Veg,130,12,Kadhi
+SI0403,Dal Baati Churma,Regional Favourites (Pan-India),Veg,190,18,Dal baati churma
+SI0404,Laal Maas,Regional Favourites (Pan-India),Non-Veg,330,28,Laal maas
+SI0405,Gatte Ki Sabzi,Regional Favourites (Pan-India),Veg,150,14,Gatte ki sabzi
+SI0406,Thepla (3 pcs),Regional Favourites (Pan-India),Veg,60,6,Thepla
+SI0407,Undhiyu,Regional Favourites (Pan-India),Veg,160,15,Undhiyu
+SI0408,Fafda Jalebi,Regional Favourites (Pan-India),Veg,70,5,Fafda
+SI0409,Litti Chokha,Regional Favourites (Pan-India),Veg,100,14,Litti chokha
+SI0410,Macher Jhol,Regional Favourites (Pan-India),Non-Veg,260,18,Macher jhol
+SI0411,Shorshe Ilish,Regional Favourites (Pan-India),Non-Veg,480,22,Hilsa
+SI0412,Kosha Mangsho,Regional Favourites (Pan-India),Non-Veg,340,28,Kosha mangsho
+SI0413,Luchi Aloo Dum,Regional Favourites (Pan-India),Veg,110,12,Luchi
+SI0414,Veg Momos (6 pcs),Regional Favourites (Pan-India),Veg,90,10,Momo (food)
+SI0415,Chicken Momos (6 pcs),Regional Favourites (Pan-India),Non-Veg,110,10,Momo (food)
+SI0416,Thukpa,Regional Favourites (Pan-India),Non-Veg,120,12,Thukpa
+SI0417,Chicken Cafreal,Regional Favourites (Pan-India),Non-Veg,270,18,Cafreal
+SI0418,Pork Vindaloo,Regional Favourites (Pan-India),Non-Veg,300,25,Vindaloo
+SI0419,Sorpotel,Regional Favourites (Pan-India),Non-Veg,280,25,Sorpotel
+SI0420,Chicken Dhansak,Regional Favourites (Pan-India),Non-Veg,250,20,Dhansak
+SI0421,Dum Aloo Kashmiri,Regional Favourites (Pan-India),Veg,170,15,Dum aloo
+SI0422,Gushtaba,Regional Favourites (Pan-India),Non-Veg,360,28,Gushtaba
+SI0423,Pav Bhaji Pulao,Regional Favourites (Pan-India),Veg,140,12,
+SI0424,Khichdi,Regional Favourites (Pan-India),Veg,100,12,Khichdi
+SI0425,Dal Khichdi with Ghee,Regional Favourites (Pan-India),Veg,120,12,Khichdi
+SI0426,Paneer Bhurji,Regional Favourites (Pan-India),Veg,170,12,Paneer
+SI0427,Bombay Sandwich,Regional Favourites (Pan-India),Veg,70,8,Sandwich
+SI0428,Egg Bhurji,Regional Favourites (Pan-India),Egg,110,8,Egg bhurji
+SI0429,Anda Curry (Dhaba Style),Regional Favourites (Pan-India),Egg,150,12,Egg curry
+SI0430,Kashmiri Kahwa,Regional Favourites (Pan-India),Beverage,60,5,Kahwa

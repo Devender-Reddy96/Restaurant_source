@@ -1,0 +1,147 @@
+@model List<CustomerOrder>
+@{
+    ViewData["Title"] = "Billing & Payments";
+    var grid = (List<CustomerOrder>)ViewBag.Grid;
+    var modes = (List<string>)ViewBag.Modes;
+    DateOnly from = ViewBag.From, to = ViewBag.To;
+    string status = ViewBag.Status;
+    string Ist(DateTime? d) => d == null ? "" : RestaurantManagement.Services.OrderLogic.ToIst(d.Value).ToString("dd MMM yy, hh:mm tt");
+}
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-receipt"></i> Billing &amp; Payments</h1>
+        <p class="page-sub">Open bills waiting for payment, and every bill with payment mode, tax, discount and tip.</p>
+    </div>
+</div>
+
+<div class="card data-card mb-4">
+    <div class="panel-title">Unpaid bills (@Model.Count)</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>Order</th><th>Table / Type</th><th>Customer</th><th>Total</th><th>Paid</th><th>Due</th><th>UPI ref from customer</th><th class="text-end">Action</th></tr></thead>
+            <tbody>
+            @foreach (var o in Model)
+            {
+                <tr>
+                    <td class="fw-semibold">@o.OrderNo</td>
+                    <td>@(o.OrderType == "Parcel" ? "Parcel" : "Table " + o.DiningTable?.TableNumber)</td>
+                    <td>@o.CustomerName <small class="text-muted">@o.CustomerMobile</small></td>
+                    <td>&#8377;@o.GrandTotal.ToString("N2")</td>
+                    <td>&#8377;@o.PaidAmount.ToString("N2")</td>
+                    <td class="fw-bold">&#8377;@o.DueAmount.ToString("N2")</td>
+                    <td>@if (!string.IsNullOrEmpty(o.CustomerUtr)) { <span class="badge b-upi">@o.CustomerUtr</span> }</td>
+                    <td class="text-end"><a asp-action="Bill" asp-route-id="@o.OrderId" class="btn btn-sm btn-primary">Open bill</a></td>
+                </tr>
+            }
+            @if (!Model.Any()) { <tr><td colspan="8" class="empty-state">No unpaid bills.</td></tr> }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card data-card">
+    <div class="panel-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <span>Bills &amp; payments</span>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="csvBtn"><i class="bi bi-download"></i> Export CSV</button>
+    </div>
+    <form method="get" class="filter-bar">
+        <div><label class="form-label">From</label><input type="date" name="from" value="@from.ToString("yyyy-MM-dd")" class="form-control form-control-sm" /></div>
+        <div><label class="form-label">To</label><input type="date" name="to" value="@to.ToString("yyyy-MM-dd")" class="form-control form-control-sm" /></div>
+        <div><label class="form-label">Status</label>
+            <select name="status" class="form-select form-select-sm">
+                @foreach (var st in new[] { "Paid", "Open", "Cancelled", "All" }) { <option selected="@(st == status)">@st</option> }
+            </select></div>
+        <div class="align-self-end"><button class="btn btn-sm btn-primary w-100"><i class="bi bi-funnel"></i> Load</button></div>
+        <div><label class="form-label">Payment mode</label>
+            <select id="fMode" class="form-select form-select-sm"><option value="">All modes</option>
+                @foreach (var m in modes) { <option>@m</option> }</select></div>
+        <div><label class="form-label">Type</label>
+            <select id="fType" class="form-select form-select-sm"><option value="">All</option><option>DineIn</option><option>Parcel</option></select></div>
+        <div><label class="form-label">Discount</label>
+            <select id="fDisc" class="form-select form-select-sm"><option value="">All</option><option value="y">With discount</option><option value="c">With coupon</option><option value="t">With tip</option></select></div>
+        <div class="flex-grow-1"><label class="form-label">Search</label>
+            <input id="fText" class="form-control form-control-sm" placeholder="Order no, customer, waiter, table..." /></div>
+    </form>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle mb-0 grid-table" id="billGrid">
+            <thead><tr>
+                <th>Order</th><th>Date</th><th>Table / Type</th><th>Customer</th><th>Waiter</th>
+                <th class="text-end">Sub-total</th><th class="text-end">Tax %</th><th class="text-end">Tax</th>
+                <th>Coupon</th><th class="text-end">Disc %</th><th class="text-end">Discount</th><th class="text-end">Round off</th>
+                <th class="text-end">Grand total</th><th class="text-end">Paid</th><th class="text-end">Tip</th>
+                <th>Payment mode</th><th>Status</th><th></th>
+            </tr></thead>
+            <tbody>
+            @foreach (var o in grid)
+            {
+                <tr data-mode="@o.PaymentModeText" data-type="@o.OrderType" data-disc="@(o.DiscountAmount > 0 ? "y" : "")@(string.IsNullOrEmpty(o.DiscountCode) ? "" : "c")@(o.TipAmount > 0 ? "t" : "")"
+                    data-v="@o.SubTotal|@o.TaxAmount|@o.DiscountAmount|@o.GrandTotal|@o.PaidAmount|@o.TipAmount">
+                    <td class="fw-semibold">@o.OrderNo</td>
+                    <td class="text-nowrap">@Ist(o.PaidOn ?? o.CreatedOn)</td>
+                    <td>@(o.OrderType == "Parcel" ? "Parcel" : "Table " + o.DiningTable?.TableNumber)</td>
+                    <td>@o.CustomerName <small class="text-muted">@o.CustomerMobile</small></td>
+                    <td>@o.WaiterEmployee?.FullName</td>
+                    <td class="text-end">@o.SubTotal.ToString("N2")</td>
+                    <td class="text-end">@o.TaxPercentEffective.ToString("0.##")%</td>
+                    <td class="text-end">@o.TaxAmount.ToString("N2")</td>
+                    <td>@if (!string.IsNullOrEmpty(o.DiscountCode)) { <span class="badge b-flat">@o.DiscountCode</span> }</td>
+                    <td class="text-end">@(o.DiscountAmount > 0 ? o.DiscountPercentEffective.ToString("0.##") + "%" : "-")</td>
+                    <td class="text-end">@o.DiscountAmount.ToString("N2")</td>
+                    <td class="text-end">@o.RoundOff.ToString("N2")</td>
+                    <td class="text-end fw-semibold">@o.GrandTotal.ToString("N2")</td>
+                    <td class="text-end">@o.PaidAmount.ToString("N2")</td>
+                    <td class="text-end">@(o.TipAmount > 0 ? o.TipAmount.ToString("N2") : "-")</td>
+                    <td>@foreach (var pm in o.Payments.GroupBy(p => p.ModeName)) { <span class="badge b-@(pm.Key.ToLowerInvariant().Contains("upi") ? "upi" : (pm.Key.ToLowerInvariant().Contains("cash") ? "cash" : "flat")) me-1">@pm.Key &#8377;@pm.Sum(x => x.Amount).ToString("N0")</span> }</td>
+                    <td><span class="badge b-@o.Status.ToLowerInvariant()">@o.Status</span></td>
+                    <td class="text-end text-nowrap">
+                        <a asp-action="Bill" asp-route-id="@o.OrderId" class="btn btn-sm btn-outline-primary" title="Open"><i class="bi bi-eye"></i></a>
+                        <a asp-action="Receipt" asp-route-id="@o.OrderId" target="_blank" class="btn btn-sm btn-outline-secondary" title="Receipt"><i class="bi bi-printer"></i></a>
+                    </td>
+                </tr>
+            }
+            @if (!grid.Any()) { <tr class="empty"><td colspan="18" class="empty-state">No bills for the selected dates.</td></tr> }
+            </tbody>
+            <tfoot><tr class="fw-bold table-light" id="gridTotals">
+                <td colspan="5">Total (<span id="tCount">0</span> bills)</td>
+                <td class="text-end" id="t0"></td><td></td><td class="text-end" id="t1"></td><td></td><td></td>
+                <td class="text-end" id="t2"></td><td></td><td class="text-end" id="t3"></td><td class="text-end" id="t4"></td><td class="text-end" id="t5"></td><td colspan="3"></td>
+            </tr></tfoot>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    var rows = Array.prototype.slice.call(document.querySelectorAll('#billGrid tbody tr:not(.empty)'));
+    function apply() {
+        var m = document.getElementById('fMode').value, t = document.getElementById('fType').value,
+            d = document.getElementById('fDisc').value, q = document.getElementById('fText').value.toLowerCase();
+        var sums = [0, 0, 0, 0, 0, 0], n = 0;
+        rows.forEach(function (r) {
+            var ok = (!m || r.dataset.mode.split(', ').indexOf(m) >= 0) && (!t || r.dataset.type === t) &&
+                     (!d || r.dataset.disc.indexOf(d) >= 0) && (!q || r.textContent.toLowerCase().indexOf(q) >= 0);
+            r.style.display = ok ? '' : 'none';
+            if (ok) { n++; r.dataset.v.split('|').forEach(function (v, i) { sums[i] += Number(v); }); }
+        });
+        document.getElementById('tCount').textContent = n;
+        sums.forEach(function (v, i) { document.getElementById('t' + i).textContent = v.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); });
+    }
+    ['fMode', 'fType', 'fDisc'].forEach(function (id) { document.getElementById(id).addEventListener('change', apply); });
+    document.getElementById('fText').addEventListener('input', apply);
+    document.getElementById('csvBtn').addEventListener('click', function () {
+        var head = Array.prototype.map.call(document.querySelectorAll('#billGrid thead th'), function (th) { return th.textContent.trim(); }).slice(0, -1);
+        var lines = [head];
+        rows.forEach(function (r) {
+            if (r.style.display === 'none') return;
+            lines.push(Array.prototype.map.call(r.cells, function (c) { return c.textContent.replace(/\s+/g, ' ').trim(); }).slice(0, -1));
+        });
+        var csv = lines.map(function (l) { return l.map(function (v) { return '"' + v.replace(/"/g, '""') + '"'; }).join(','); }).join('\r\n');
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv' }));
+        a.download = 'bills.csv'; a.click();
+    });
+    apply();
+})();
+</script>
+}

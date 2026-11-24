@@ -1,0 +1,72 @@
+@model KitchenBoardViewModel
+@{
+    var newIds = string.Join(",", Model.Orders.SelectMany(o => o.Items).Where(i => i.Status == "New").Select(i => i.OrderItemId));
+    var stn = Model.StationId?.ToString() ?? "";
+    var pos = 0;
+}
+<div data-ids="@newIds"></div>
+
+@if (Model.Pending.Any())
+{
+    <div class="card mb-3"><div class="card-body py-2">
+        <b class="me-2"><i class="bi bi-list-check"></i> Items queue:</b>
+        @foreach (var p in Model.Pending)
+        {
+            <span class="badge badge-soft fs-6 me-1">@p.Name &times; @p.Quantity</span>
+        }
+    </div></div>
+}
+
+<div class="row g-3">
+@foreach (var o in Model.Orders)
+{
+    pos++;
+    var oldest = o.Items.Where(i => i.Status is "New" or "Preparing").Min(i => i.CreatedOn);
+    var mins = (int)(DateTime.UtcNow - oldest).TotalMinutes;
+    var cls = mins >= 20 ? "late" : (mins >= 10 ? "warn" : "");
+    <div class="col-md-6 col-xl-4">
+        <div class="kot @cls">
+            <div class="kot-head">
+                <div>
+                    <span class="queue-no">#@pos</span>
+                    <b class="ms-1">@(o.OrderType == "Parcel" ? "PARCEL" : "Table " + o.DiningTable?.TableNumber)</b>
+                    <small class="text-muted ms-1">@o.OrderNo</small>
+                </div>
+                <b>@mins min</b>
+            </div>
+            @foreach (var i in o.Items)
+            {
+                <div class="kot-item @(i.Status == "Ready" ? "ready" : "")">
+                    <b class="fs-5">@i.Quantity&times;</b>
+                    <div class="flex-grow-1">
+                        <div class="nm">@i.ItemName @if (i.RoundNo > 1) { <span class="badge badge-soft">Round @i.RoundNo</span> }</div>
+                        @if (!string.IsNullOrEmpty(i.AddonNames)) { <div class="small fw-semibold text-primary">+ @i.AddonNames</div> }
+                        @if (!string.IsNullOrWhiteSpace(i.Note)) { <small class="text-danger"><i class="bi bi-chat-left-text"></i> @i.Note</small> }
+                    </div>
+                    @if (i.Status == "New")
+                    {
+                        <button class="btn btn-sm btn-warning" data-post="/Kitchen/SetStatus" data-params='{"id":@i.OrderItemId,"status":"Preparing"}'>Cook</button>
+                        <button class="btn btn-sm btn-success" data-post="/Kitchen/SetStatus" data-params='{"id":@i.OrderItemId,"status":"Ready"}'>Ready</button>
+                    }
+                    else if (i.Status == "Preparing")
+                    {
+                        <span class="badge b-preparing">Cooking</span>
+                        <button class="btn btn-sm btn-success" data-post="/Kitchen/SetStatus" data-params='{"id":@i.OrderItemId,"status":"Ready"}'>Ready</button>
+                    }
+                    else
+                    {
+                        <span class="badge b-ready">Ready</span>
+                    }
+                </div>
+            }
+            <div class="p-2 d-grid">
+                <button class="btn btn-success" data-post="/Kitchen/SetOrderStatus" data-params='{"orderId":@o.OrderId,"status":"Ready","stationId":"@stn"}'><i class="bi bi-check2-all"></i> All ready</button>
+            </div>
+        </div>
+    </div>
+}
+</div>
+@if (!Model.Orders.Any())
+{
+    <div class="card"><div class="card-body empty-state"><i class="bi bi-emoji-smile"></i><br />No orders waiting. Kitchen is clear.</div></div>
+}

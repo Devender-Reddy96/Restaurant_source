@@ -1,0 +1,116 @@
+@model PosHomeViewModel
+@{
+    ViewData["Title"] = "Tables & Orders";
+    string IstTime(DateTime d) => RestaurantManagement.Services.OrderLogic.ToIst(d).ToString("hh:mm tt");
+}
+
+<div class="page-head">
+    <div>
+        <h1 class="page-title"><i class="bi bi-grid-3x3-gap"></i> Tables &amp; Orders</h1>
+        <p class="page-sub">Tap a free table to take an order. Waiting customers are in the queue on the right.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a asp-action="Order" asp-route-type="Parcel" class="btn btn-primary"><i class="bi bi-bag"></i> New Parcel Order</a>
+        <a asp-action="Orders" class="btn btn-outline-primary"><i class="bi bi-list-ol"></i> Order Queue</a>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-xl-9">
+        @foreach (var f in Model.Floors)
+        {
+            <div class="floor-title"><i class="bi bi-layers"></i> @f.FloorName</div>
+            <div class="row g-3 mb-3">
+                @foreach (var c in f.Tables)
+                {
+                    var st = c.Table.Status.ToLowerInvariant();
+                    <div class="col-6 col-md-4 col-xl-3">
+                        <a class="table-tile @st" asp-action="Order" asp-route-tableId="@c.Table.DiningTableId" asp-route-orderId="@c.Order?.OrderId">
+                            <span class="tno">@c.Table.TableNumber</span>
+                            <span class="badge float-end b-@st">@c.Table.Status</span>
+                            <small><i class="bi bi-people"></i> seats @c.Table.Capacity</small>
+                            @if (c.Order != null)
+                            {
+                                <small class="mt-1"><b>@c.Order.OrderNo</b> &middot; @c.Order.Items.Count(i => i.Status != "Cancelled") item(s)</small>
+                                <small class="fw-semibold text-dark">&#8377;@c.Order.GrandTotal.ToString("N0")</small>
+                            }
+                            else if (c.Table.Status == "Occupied")
+                            {
+                                <small class="mt-1 text-danger">Seated, no order yet</small>
+                            }
+                        </a>
+                        @if (c.Order == null && c.Table.Status != "Available")
+                        {
+                            <form asp-action="ReleaseTable" asp-route-id="@c.Table.DiningTableId" method="post" class="mt-1">
+                                <button class="btn btn-sm btn-outline-secondary w-100">Mark available</button>
+                            </form>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        @if (!Model.Floors.Any())
+        {
+            <div class="card"><div class="card-body empty-state"><i class="bi bi-grid-3x3-gap"></i><br />No tables yet. Add them under <a asp-controller="DiningTables" asp-action="Index">Tables</a>.</div></div>
+        }
+
+        @if (Model.Parcels.Any())
+        {
+            <div class="floor-title mt-2"><i class="bi bi-bag"></i> Parcel orders in progress</div>
+            <div class="row g-3">
+                @foreach (var p in Model.Parcels)
+                {
+                    <div class="col-6 col-md-4 col-xl-3">
+                        <a class="table-tile" asp-action="Order" asp-route-orderId="@p.OrderId">
+                            <span class="tno">@p.OrderNo</span>
+                            <small>@(p.CustomerName ?? "Walk-in") @(p.CustomerMobile)</small>
+                            <small>@p.Items.Count(i => i.Status != "Cancelled") item(s) &middot; &#8377;@p.GrandTotal.ToString("N0")</small>
+                            <small>@IstTime(p.CreatedOn)</small>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="col-xl-3">
+        <div class="card panel">
+            <div class="panel-title"><i class="bi bi-hourglass-split"></i> Table queue (@Model.Waiting.Count)</div>
+            <div class="card-body">
+                @for (var i = 0; i < Model.Waiting.Count; i++)
+                {
+                    var w = Model.Waiting[i];
+                    <div class="border rounded-3 p-2 mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span><span class="queue-no">#@(i + 1)</span> <b>@w.CustomerName</b></span>
+                            <small class="text-muted">@IstTime(w.CreatedOn)</small>
+                        </div>
+                        <small class="text-muted">party of @w.PartySize @(w.Mobile != null ? "· " + w.Mobile : "")</small>
+                        <form asp-action="SeatWaiting" method="post" class="d-flex gap-1 mt-2">
+                            <input type="hidden" name="id" value="@w.TableWaitingId" />
+                            <select name="tableId" class="form-select form-select-sm" required>
+                                <option value="">Assign table...</option>
+                                @foreach (var t in Model.FreeTables.OrderByDescending(t => t.Capacity >= w.PartySize).ThenBy(t => t.Capacity))
+                                {
+                                    <option value="@t.DiningTableId">@t.TableNumber (@t.Capacity)</option>
+                                }
+                            </select>
+                            <button class="btn btn-sm btn-primary">Seat</button>
+                        </form>
+                        <form asp-action="CancelWaiting" asp-route-id="@w.TableWaitingId" method="post" class="mt-1 text-end">
+                            <button class="btn btn-link btn-sm text-danger p-0">Remove</button>
+                        </form>
+                    </div>
+                }
+                @if (!Model.Waiting.Any()) { <p class="text-muted small">Nobody waiting.</p> }
+                <hr />
+                <form asp-action="AddWaiting" method="post" class="vstack gap-2">
+                    <input name="customerName" class="form-control form-control-sm" placeholder="Customer name" required />
+                    <input name="mobile" class="form-control form-control-sm" placeholder="Mobile (optional)" inputmode="numeric" maxlength="13" />
+                    <div class="input-group input-group-sm"><span class="input-group-text">People</span><input name="partySize" type="number" min="1" value="2" class="form-control" /></div>
+                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-lg"></i> Add to queue</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
